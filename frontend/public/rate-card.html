@@ -458,7 +458,13 @@
 
     function renderLogos(logos) {
       logosRow.innerHTML = "";
-      (logos || []).filter(Boolean).slice(0, 3).forEach(src => {
+      const EDU_FALLBACK  = "https://ik.imagekit.io/2pg1fp1lr/ed_institution.png";
+      const WORK_FALLBACK = "https://ik.imagekit.io/2pg1fp1lr/work_institution.png";
+      const srcs = [
+        (logos && logos[0]) || EDU_FALLBACK,
+        (logos && logos[1]) || WORK_FALLBACK,
+      ];
+      srcs.forEach(src => {
         const box = document.createElement("div");
         box.className = "logo-box";
         const img = document.createElement("img");
