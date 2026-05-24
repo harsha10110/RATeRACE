@@ -54,6 +54,13 @@ async function renderCard(cardData) {
 
     await page.evaluateHandle('document.fonts.ready');
 
+    // Wait for all <img> elements to finish loading (logos, chess, hourglass)
+    await page.evaluate(() => Promise.all(
+      Array.from(document.images).map(img =>
+        img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })
+      )
+    ));
+
     const artboard = await page.$('#artboard');
     if (!artboard) throw new Error('#artboard element not found in rate-card.html');
 
