@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         source: '/api/card/view/:slug*',
         destination: `${backendUrl}/api/card/view/:slug*`,
       },
+      // Proxy leaderboard so LEADERBOARD buttons use the Vercel domain
+      {
+        source: '/leaderboard',
+        destination: `${backendUrl}/leaderboard`,
+      },
     ];
   },
 };

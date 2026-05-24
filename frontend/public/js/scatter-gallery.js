@@ -1945,7 +1945,7 @@
       const params = new URLSearchParams({ from: returnUrl });
       if (leadModal.token)  params.set('token',  leadModal.token);
       if (leadModal.amCode) params.set('amCode', leadModal.amCode);
-      window.location.href = BACKEND_URL + '/leaderboard?' + params.toString();
+      window.location.href = window.location.origin + '/leaderboard?' + params.toString();
     });
 
     // Fetch card data and populate meters + image
@@ -2891,7 +2891,7 @@
       const params = new URLSearchParams({ from: window.location.href });
       if (leadModal.token)  params.set('token',  leadModal.token);
       if (leadModal.amCode) params.set('amCode', leadModal.amCode);
-      window.location.href = BACKEND_URL + '/leaderboard?' + params.toString();
+      window.location.href = window.location.origin + '/leaderboard?' + params.toString();
       return true;
     }
     return false;
