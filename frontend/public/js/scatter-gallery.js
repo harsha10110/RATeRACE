@@ -1919,7 +1919,7 @@
     if (document.getElementById('rr-final-modal-overlay')) return;
     injectFinalModalStyles();
 
-    const shareUrl = `${BACKEND_URL}/card/${encodeURIComponent(amCode)}`;
+    const shareUrl = `${window.location.origin}/card/${encodeURIComponent(amCode)}`;
 
     const overlay = document.createElement('div');
     overlay.id = 'rr-final-modal-overlay';
