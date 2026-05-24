@@ -37,11 +37,12 @@ async function fetchBrandfetchLogo(domain) {
 }
 
 // domain: LLM-guessed domain (e.g. "mit.edu", "google.com")
-// name:   org name, used as monogram fallback
+// Returns { logoUrl } where logoUrl is a Brandfetch URL or null (no monogram fallback —
+// the card template supplies its own fallback images for edu/work when logoUrl is null).
 async function getOrgLogo(name, domain) {
-  if (!name && !domain) return { logoUrl: monogramSvg('?') };
+  if (!name && !domain) return { logoUrl: null };
   const useDomain = domain || `${slugify(name || '')}.com`;
-  const logoUrl   = (await fetchBrandfetchLogo(useDomain)) ?? monogramSvg(name || '?');
+  const logoUrl   = (await fetchBrandfetchLogo(useDomain)) ?? null;
   return { logoUrl };
 }
 
