@@ -458,8 +458,8 @@
 
     function renderLogos(logos) {
       logosRow.innerHTML = "";
-      const EDU_FALLBACK  = "https://ik.imagekit.io/2pg1fp1lr/ed_institution.png";
-      const WORK_FALLBACK = "https://ik.imagekit.io/2pg1fp1lr/work_institution.png";
+      const EDU_FALLBACK  = "../assets/ed_institution.png";
+      const WORK_FALLBACK = "../assets/work_institution.png";
       const srcs = [
         (logos && logos[0]) || EDU_FALLBACK,
         (logos && logos[1]) || WORK_FALLBACK,
