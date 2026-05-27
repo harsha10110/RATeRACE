@@ -88,7 +88,7 @@
       width: 100%; border: 1px solid rgba(230,0,0,.36);
       background: linear-gradient(90deg,rgba(230,0,0,.14),rgba(230,0,0,.045) 34%,rgba(255,255,255,.02)), rgba(0,0,0,.58);
       box-shadow: 0 0 42px rgba(230,0,0,.075); padding: 14px 18px;
-      display: grid; grid-template-columns: 80px minmax(180px,1fr) auto minmax(380px,500px) 170px;
+      display: grid; grid-template-columns: 80px minmax(180px,1fr) auto minmax(380px,500px);
       gap: 18px; align-items: center;
     }
     .your-avatar {
@@ -116,13 +116,6 @@
     .metric b.green  { color:var(--green); }
     .metric b.blue   { color:var(--blue); }
     .metric b.yellow { color:var(--yellow); }
-    .share-rank-btn {
-      width:100%; min-height:50px; border:1px solid #fff; background:#fff; color:#000;
-      font-family:var(--pixel); font-size:13px; letter-spacing:.12em; text-transform:uppercase;
-      cursor:pointer; transition:160ms ease;
-    }
-    .share-rank-btn:hover { background:var(--red); color:#fff; border-color:var(--red); box-shadow:0 0 24px rgba(230,0,0,.30); }
-
     /* ── Filters (dropdowns) ── */
     .filter-deck { display:grid; grid-template-columns:1.15fr .85fr; gap:12px; align-items:stretch; }
     .filter-dd { position:relative; }
@@ -241,16 +234,15 @@
     @media (max-width:1120px) {
       .rr-page { overflow-x:hidden; }
       .rr-shell { height:auto; min-height:100vh; padding-top:166px; padding-bottom:calc(48px + env(safe-area-inset-bottom)); }
-      .standing-strip { grid-template-columns:72px 1fr auto; grid-template-areas:"avatar identity button" "line line line" "metrics metrics metrics"; }
-      .your-avatar { grid-area:avatar; } .your-identity { grid-area:identity; } .your-line { grid-area:line; max-width:none; } .metric-grid { grid-area:metrics; } .share-rank-btn { grid-area:button; width:160px; }
+      .standing-strip { grid-template-columns:72px 1fr minmax(380px,500px); grid-template-areas:"avatar identity line" "metrics metrics metrics"; }
+      .your-avatar { grid-area:avatar; } .your-identity { grid-area:identity; } .your-line { grid-area:line; max-width:none; } .metric-grid { grid-area:metrics; }
       .filter-deck { grid-template-columns:1fr; }
       .board { min-height:480px; }
     }
     @media (max-width:760px) {
       .rr-clock { top:72px; left:0; right:0; text-align:center; }
       .rr-shell { width:92vw; padding-top:166px; }
-      .standing-strip { grid-template-columns:1fr; grid-template-areas:"avatar" "identity" "line" "metrics" "button"; justify-items:start; }
-      .share-rank-btn { width:100%; }
+      .standing-strip { grid-template-columns:1fr; grid-template-areas:"avatar" "identity" "line" "metrics"; justify-items:start; }
       .metric-grid { grid-template-columns:1fr 1fr; width:100%; }
       .filter-group { grid-template-columns:1fr; }
       .filter-label { height:auto; min-height:34px; border-right:0; border-bottom:1px solid rgba(255,255,255,.10); }
@@ -295,9 +287,6 @@
       /* Standing strip compacted */
       .your-name { font-size:clamp(16px,5vw,22px); }
       .metric-grid { grid-template-columns:1fr 1fr; }
-
-      /* Safe area bottom on standing strip share button */
-      .share-rank-btn { padding-bottom:calc(12px + env(safe-area-inset-bottom)); min-height:calc(50px + env(safe-area-inset-bottom)); }
 
       /* Back button larger touch area */
       .rr-back-btn { padding: 12px 14px; }
@@ -347,7 +336,6 @@
           <div class="metric"><span>Hierarchy</span><b id="yourPiece">—</b></div>
           <div class="metric"><span>Percentile</span><b class="green" id="yourPercentile">—</b></div>
         </div>
-        <button class="share-rank-btn" id="shareRankBtn">SHARE MY RANK</button>
       </section>
 
       <!-- Filters -->
@@ -421,7 +409,6 @@
           <!-- Only visible when viewing own card -->
           <div class="detail-actions" id="detailActions" style="display:none">
             <button class="primary" id="detailShareCard">Copy Card Link</button>
-            <button id="detailShareRank">Share My Rank</button>
           </div>
         </div>
       </div>
@@ -650,26 +637,6 @@
       try { await navigator.clipboard.writeText(url); btn.textContent = 'COPIED'; }
       catch (_) { btn.textContent = 'COPY FAILED'; }
       setTimeout(() => { btn.textContent = 'Copy Card Link'; }, 1400);
-    });
-
-    // Share own leaderboard rank
-    document.getElementById('detailShareRank').addEventListener('click', async () => {
-      const btn  = document.getElementById('detailShareRank');
-      const code = norm(myAmCode);
-      const url  = window.location.origin + '/leaderboard?highlighted=' + code;
-      try { await navigator.clipboard.writeText(url); btn.textContent = 'COPIED'; }
-      catch (_) { btn.textContent = 'COPY FAILED'; }
-      setTimeout(() => { btn.textContent = 'Share My Rank'; }, 1400);
-    });
-
-    // Standing strip share rank
-    document.getElementById('shareRankBtn').addEventListener('click', async () => {
-      const btn  = document.getElementById('shareRankBtn');
-      const code = norm(myAmCode);
-      const url  = window.location.origin + '/leaderboard?highlighted=' + code;
-      try { await navigator.clipboard.writeText(url); btn.textContent = 'LINK COPIED'; }
-      catch (_) { btn.textContent = 'COPY FAILED'; }
-      setTimeout(() => { btn.textContent = 'SHARE MY RANK'; }, 1400);
     });
 
     // ── Filters (dropdowns) ──────────────────────────────────────────────────
