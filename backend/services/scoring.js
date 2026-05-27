@@ -1,6 +1,5 @@
 'use strict';
-const { complete }    = require('./llm');
-const { getOrgLogo }  = require('./logos');
+const { complete } = require('./llm');
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SYSTEM PROMPT — adultmoney RATe RACE scoring engine v3
@@ -237,21 +236,15 @@ async function scoreProfile(profile, userId = null) {
   validateCoherence(result);
   delete result._warning;
 
-  // ── Resolve org logos concurrently ────────────────────────────────────
-  const [eduLogo, workLogo] = await Promise.all([
-    getOrgLogo(result.educationOrg?.name, result.educationOrg?.domain),
-    getOrgLogo(result.workOrg?.name,      result.workOrg?.domain),
-  ]);
-
   result.educationOrg = {
     name:    result.educationOrg?.name   ?? null,
     domain:  result.educationOrg?.domain ?? null,
-    logoUrl: eduLogo.logoUrl,
+    logoUrl: null,
   };
   result.workOrg = {
     name:    result.workOrg?.name   ?? null,
     domain:  result.workOrg?.domain ?? null,
-    logoUrl: workLogo.logoUrl,
+    logoUrl: null,
   };
 
   return result;

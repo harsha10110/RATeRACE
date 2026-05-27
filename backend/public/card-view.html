@@ -628,6 +628,12 @@
           if (pEl) pEl.textContent = `${card.replaceabilityPercentile}%`;
         }
 
+        // Dynamic org tooltips
+        const eduEl  = document.getElementById('hotspotEduBadge');
+        const workEl = document.getElementById('hotspotWorkBadge');
+        if (eduEl)  eduEl.dataset.tooltip  = card.educationOrg?.name || 'Your highest qualification and the institution you attended.';
+        if (workEl) workEl.dataset.tooltip = card.workOrg?.name      || 'Your current or most recent employer.';
+
         // Click-me overlay — same priority as card image: portfolioUrl → ctaUrl → linkedinUrl
         let linkHref = data.user?.portfolioUrl || card.ctaUrl || card.linkedinUrl || null;
         if (linkHref && linkHref !== '#') {

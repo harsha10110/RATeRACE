@@ -1961,6 +1961,12 @@
           if (img && wrap) { img.src = card.imageUrl; wrap.classList.add('has-card-image'); }
         }
 
+        // Dynamic org tooltips
+        const eduSpot  = overlay.querySelector('.hotspot-edu-badge');
+        const workSpot = overlay.querySelector('.hotspot-work-badge');
+        if (eduSpot)  eduSpot.dataset.tooltip  = card.educationOrg?.name || 'Your highest qualification and the institution you attended.';
+        if (workSpot) workSpot.dataset.tooltip = card.workOrg?.name      || 'Your current or most recent employer.';
+
         // Click-me overlay — same priority as card image: portfolioUrl → ctaUrl → linkedinUrl
         const rawLinkHref = data.user?.portfolioUrl || card.ctaUrl || card.linkedinUrl || null;
         const linkHref = rawLinkHref && rawLinkHref !== '#' ? ensureAbsoluteUrl(rawLinkHref) : null;

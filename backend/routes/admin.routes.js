@@ -8,10 +8,9 @@ const adminAuth        = require('../middleware/adminAuth');
 const { authLimiter }  = require('../middleware/rateLimiter');
 const User             = require('../models/User');
 const Card             = require('../models/Card');
-const { buildCardData }    = require('../services/cardData');
-const { renderCard }       = require('../services/puppeteer');
-const { uploadCardImage }  = require('../services/cloudinary');
-const { getOrgLogo }       = require('../services/logos');
+const { buildCardData }   = require('../services/cardData');
+const { renderCard }      = require('../services/puppeteer');
+const { uploadCardImage } = require('../services/cloudinary');
 const ApiUsage             = require('../models/ApiUsage');
 
 const router = express.Router();
@@ -280,25 +279,7 @@ router.post('/api/cards/:id/regen', async (req, res, next) => {
     const user = await User.findById(card.userId).select('-passwordHash').lean();
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // Re-fetch org logos so regen always uses the latest Brandfetch result
-    const [eduLogo, workLogo] = await Promise.all([
-      getOrgLogo(card.educationOrg?.name, card.educationOrg?.domain),
-      getOrgLogo(card.workOrg?.name,      card.workOrg?.domain),
-    ]);
-
-    const logoUpdate = {};
-    if (card.educationOrg?.name || card.educationOrg?.domain) {
-      logoUpdate['educationOrg.logoUrl'] = eduLogo.logoUrl;
-    }
-    if (card.workOrg?.name || card.workOrg?.domain) {
-      logoUpdate['workOrg.logoUrl'] = workLogo.logoUrl;
-    }
-
-    const updatedCard = Object.keys(logoUpdate).length
-      ? await Card.findByIdAndUpdate(req.params.id, { $set: logoUpdate }, { new: true, lean: true })
-      : card;
-
-    const cardData = buildCardData(user, updatedCard);
+    const cardData = buildCardData(user, card);
     const buffer   = await renderCard(cardData);
     const imageUrl = await uploadCardImage(buffer, String(card.userId));
 
