@@ -23,6 +23,15 @@ const nextConfig: NextConfig = {
         source: '/leaderboard',
         destination: `${backendUrl}/leaderboard`,
       },
+      // leaderboard.html calls these as relative paths when served via the proxy
+      {
+        source: '/api/auth/me',
+        destination: `${backendUrl}/api/auth/me`,
+      },
+      {
+        source: '/api/leaderboard',
+        destination: `${backendUrl}/api/leaderboard`,
+      },
     ];
   },
 };
