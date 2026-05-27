@@ -2967,9 +2967,18 @@
     }
     const lb = headerBtnHit.leaderboard;
     if (cx >= lb.x && cx <= lb.x + lb.w && cy >= lb.y && cy <= lb.y + lb.h) {
+      // Fallback: if hydration hasn't finished yet, read token directly from localStorage
+      let tok = leadModal.token;
+      let am  = leadModal.amCode;
+      if (!tok) {
+        try {
+          const stored = JSON.parse(localStorage.getItem('rr_auth') || 'null');
+          if (stored?.token) { tok = stored.token; am = am || stored.amCode; }
+        } catch (_) {}
+      }
       const params = new URLSearchParams({ from: window.location.href });
-      if (leadModal.token)  params.set('token',  leadModal.token);
-      if (leadModal.amCode) params.set('amCode', leadModal.amCode);
+      if (tok) params.set('token',  tok);
+      if (am)  params.set('amCode', am);
       window.location.href = window.location.origin + '/leaderboard?' + params.toString();
       return true;
     }

@@ -462,9 +462,21 @@
 
     // ── Auth ─────────────────────────────────────────────────────────────────
     async function resolveAuth() {
-      if (!URL_TOKEN) { authState = 'public'; return; }
+      // URL token takes priority; fall back to localStorage (handles timing race
+      // where the canvas button was clicked before hydration finished, or direct navigation)
+      let token = URL_TOKEN;
+      if (!token) {
+        try {
+          const stored = JSON.parse(localStorage.getItem('rr_auth') || 'null');
+          if (stored?.token) {
+            token = stored.token;
+            if (!myAmCode && stored.amCode) myAmCode = norm(stored.amCode);
+          }
+        } catch (_) {}
+      }
+      if (!token) { authState = 'public'; return; }
       try {
-        const res  = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${URL_TOKEN}` } });
+        const res  = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) { authState = 'public'; return; }
         const data = await res.json();
         if (!myAmCode && data.amCode) myAmCode = norm(data.amCode);
