@@ -30,7 +30,10 @@ async function fetchBrandfetchLogo(domain) {
       headers: { Referer: config.BASE_URL },
       signal: AbortSignal.timeout(5000),
     });
-    return res.ok ? url : null;
+    if (!res.ok) return null;
+    const ct = res.headers.get('content-type') || '';
+    if (!ct.startsWith('image/') && !ct.includes('svg')) return null;
+    return url;
   } catch {
     return null;
   }
