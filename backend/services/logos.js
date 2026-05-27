@@ -24,7 +24,7 @@ function monogramSvg(name) {
 async function fetchBrandfetchLogo(domain) {
   const apiKey = config.BRANDFETCH_API_KEY;
   if (!apiKey || !domain) return null;
-  const url = `https://cdn.brandfetch.io/domain/${domain}?c=${apiKey}`;
+  const url = `https://cdn.brandfetch.io/${domain}?c=${apiKey}`;
   try {
     const res = await fetch(url, {
       headers: { Referer: config.BASE_URL },
