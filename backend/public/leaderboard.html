@@ -21,11 +21,11 @@
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; min-height: 100%; background: #000; color: #fff; font-family: var(--mono); overflow: hidden; }
+    html, body { margin: 0; width: 100%; min-height: 100%; background: #000; color: #fff; font-family: var(--mono); overflow-x: hidden; }
     button, input { font: inherit; }
 
     .rr-page {
-      position: relative; width: 100vw; height: 100vh; overflow: hidden;
+      position: relative; width: 100%; min-height: 100vh; overflow-x: hidden;
       background: radial-gradient(circle at 50% 38%, rgba(255,255,255,.075), rgba(255,255,255,.016) 30%, transparent 56%),
                   radial-gradient(circle at 72% 24%, rgba(230,0,0,.075), transparent 31%), #000;
       isolation: isolate;
@@ -52,9 +52,12 @@
       position: absolute; left: clamp(18px,3vw,40px); top: 0;
       border: 0; background: transparent; color: rgba(255,255,255,.72);
       font-family: var(--pixel); font-size: clamp(18px,2vw,28px);
-      cursor: pointer; padding: 4px 8px; transition: 160ms ease; line-height: 1;
+      cursor: pointer; padding: 10px 12px; min-height: 44px; min-width: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: 160ms ease; line-height: 1;
     }
     .rr-back-btn:hover { color: #fff; }
+    .rr-back-btn:active { opacity: 0.7; }
     /* RateDisplay — numbers only */
     .rank, .podium-score, .cell-rate.score, .cell-repl.score { font-family: "RateDisplay", monospace; }
     .podium-card::after { font-family: "RateDisplay", monospace; }
@@ -72,8 +75,8 @@
 
     /* ── Shell ── */
     .rr-shell {
-      position: relative; z-index: 4; width: min(92vw,1380px); height: 100vh;
-      margin: 0 auto; padding: 166px 0 40px;
+      position: relative; z-index: 4; width: min(92vw,1380px); min-height: 100vh;
+      margin: 0 auto; padding: 166px 0 calc(40px + env(safe-area-inset-bottom));
       display: grid; grid-template-rows: auto auto auto auto minmax(0,1fr); gap: 12px;
     }
 
@@ -125,6 +128,7 @@
     .filter-dd { position:relative; }
     .filter-dd-trigger { width:100%; min-height:46px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.34); display:flex; align-items:center; padding:0; cursor:pointer; transition:160ms ease; }
     .filter-dd-trigger:hover { border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.04); }
+    .filter-dd-trigger:active { opacity: 0.75; }
     .filter-dd.is-open .filter-dd-trigger { border-color:rgba(255,255,255,.36); background:rgba(255,255,255,.06); }
     .filter-dd-label { padding:0 14px; border-right:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.46); font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap; align-self:stretch; display:flex; align-items:center; }
     .filter-dd-value { flex:1; padding:0 12px; color:#fff; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; text-align:left; }
@@ -132,7 +136,8 @@
     .filter-dd.is-open .filter-dd-arrow { transform:rotate(180deg); }
     .filter-dd-menu { position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:50; border:1px solid rgba(255,255,255,.22); background:rgba(6,6,6,.97); box-shadow:0 8px 32px rgba(0,0,0,.72); display:none; flex-direction:column; }
     .filter-dd.is-open .filter-dd-menu { display:flex; }
-    .filter-dd-item { min-height:40px; border:0; border-bottom:1px solid rgba(255,255,255,.08); background:transparent; color:rgba(255,255,255,.62); font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:0 14px; cursor:pointer; transition:120ms ease; display:flex; align-items:center; gap:9px; text-align:left; white-space:nowrap; }
+    .filter-dd-item { min-height:44px; border:0; border-bottom:1px solid rgba(255,255,255,.08); background:transparent; color:rgba(255,255,255,.62); font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:0 14px; cursor:pointer; transition:120ms ease; display:flex; align-items:center; gap:9px; text-align:left; white-space:nowrap; }
+    .filter-dd-item:active { opacity: 0.7; }
     .filter-dd-item:last-child { border-bottom:0; }
     .filter-dd-item:hover { background:rgba(255,255,255,.055); color:#fff; }
     .filter-dd-item.is-active { color:#fff; background:rgba(255,255,255,.04); }
@@ -142,6 +147,7 @@
     .podium { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
     .podium-card { min-width:0; border:1px solid rgba(255,255,255,.16); background:rgba(0,0,0,.48); min-height:100px; padding:13px; display:grid; grid-template-columns:52px 1fr; gap:12px; align-items:center; position:relative; overflow:hidden; box-shadow:0 0 38px rgba(255,255,255,.035); cursor:pointer; transition:160ms ease; }
     .podium-card:hover { transform:translateY(-2px); border-color:rgba(255,255,255,.38); box-shadow:0 0 44px rgba(255,255,255,.075); }
+    .podium-card:active { opacity: 0.75; transform: scale(0.98); }
     .podium-card:first-child { border-color:rgba(255,255,255,.38); box-shadow:0 0 44px rgba(255,255,255,.08); }
     .podium-card::after { content:attr(data-rank); position:absolute; right:10px; top:6px; font-family:var(--pixel); color:rgba(255,255,255,.08); font-size:54px; line-height:1; pointer-events:none; }
     .podium-avatar { width:52px; height:68px; border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.04); overflow:hidden; transform:rotate(-1deg); flex-shrink:0; }
@@ -157,10 +163,11 @@
 
     /* ── Board ── */
     .board { min-height:0; border:1px solid rgba(255,255,255,.16); background:rgba(0,0,0,.42); overflow:hidden; box-shadow:0 0 52px rgba(255,255,255,.035); }
-    .board-header { display:grid; grid-template-columns:66px minmax(240px,1fr) 100px 120px 145px; border-bottom:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.022); }
+    .board-scroll-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-color:rgba(255,255,255,.22) transparent; scrollbar-width:thin; }
+    .board-header { display:grid; grid-template-columns:66px minmax(240px,1fr) 100px 120px 145px; border-bottom:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.022); min-width:560px; }
     .board-header > div { padding:7px 14px; font-family:var(--mono); font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.32); }
-    .board-body { height:100%; overflow:auto; scrollbar-color:rgba(255,255,255,.22) transparent; scrollbar-width:thin; }
-    .row { min-height:66px; border-bottom:1px solid rgba(255,255,255,.085); display:grid; grid-template-columns:66px minmax(240px,1fr) 100px 120px 145px; align-items:center; transition:150ms ease; cursor:pointer; position:relative; }
+    .board-body { height:100%; overflow-y:auto; overflow-x:visible; scrollbar-color:rgba(255,255,255,.22) transparent; scrollbar-width:thin; }
+    .row { min-height:66px; border-bottom:1px solid rgba(255,255,255,.085); display:grid; grid-template-columns:66px minmax(240px,1fr) 100px 120px 145px; align-items:center; transition:150ms ease; cursor:pointer; position:relative; min-width:560px; }
     .row:hover { background:rgba(255,255,255,.045); }
     .row.is-me { background:linear-gradient(90deg,rgba(230,0,0,.17),rgba(230,0,0,.045),rgba(255,255,255,.02)); border-top:1px solid rgba(230,0,0,.35); border-bottom:1px solid rgba(230,0,0,.35); }
     .row.is-highlighted { background:linear-gradient(90deg,rgba(45,95,169,.22),rgba(45,95,169,.06),rgba(255,255,255,.01)); border-top:1px solid rgba(45,95,169,.45); border-bottom:1px solid rgba(45,95,169,.45); }
@@ -173,8 +180,9 @@
     .avatar-ph { width:100%; height:100%; background:radial-gradient(circle at 50% 27%,#f1c5a2 0 18%,transparent 19%),radial-gradient(circle at 50% 20%,#5c35d6 0 22%,transparent 23%),linear-gradient(180deg,transparent 0 43%,#1d2030 43% 72%,transparent 72%),#eee8da; }
     .name-stack { min-width:0; }
     .name { display:block; color:#fff; font-family:var(--sans); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .role { display:block; margin-top:3px; color:rgba(255,255,255,.48); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .role { display:block; margin-top:3px; color:rgba(255,255,255,.48); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; word-break:break-all; }
     .score { font-family:var(--pixel); font-size:24px; line-height:1; color:#fff; }
+    .row:active { background:rgba(255,255,255,.07); }
     .score.red { color:var(--red); }
     .piece-badge { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border:1px solid rgba(255,255,255,.20); font-family:var(--pixel); font-size:18px; line-height:1; background:rgba(255,255,255,.035); }
     .board-loading { display:flex; align-items:center; justify-content:center; height:100%; color:rgba(255,255,255,.38); font-size:12px; letter-spacing:.14em; text-transform:uppercase; }
@@ -231,9 +239,8 @@
 
     /* ── Responsive ── */
     @media (max-width:1120px) {
-      html,body { overflow:auto; }
-      .rr-page { height:auto; min-height:100vh; overflow:hidden; }
-      .rr-shell { height:auto; min-height:100vh; padding-top:166px; padding-bottom:48px; }
+      .rr-page { overflow-x:hidden; }
+      .rr-shell { height:auto; min-height:100vh; padding-top:166px; padding-bottom:calc(48px + env(safe-area-inset-bottom)); }
       .standing-strip { grid-template-columns:72px 1fr auto; grid-template-areas:"avatar identity button" "line line line" "metrics metrics metrics"; }
       .your-avatar { grid-area:avatar; } .your-identity { grid-area:identity; } .your-line { grid-area:line; max-width:none; } .metric-grid { grid-area:metrics; } .share-rank-btn { grid-area:button; width:160px; }
       .filter-deck { grid-template-columns:1fr; }
@@ -241,22 +248,71 @@
     }
     @media (max-width:760px) {
       .rr-clock { top:72px; left:0; right:0; text-align:center; }
-      .rr-shell { width:min(92vw,440px); padding-top:166px; }
+      .rr-shell { width:92vw; padding-top:166px; }
       .standing-strip { grid-template-columns:1fr; grid-template-areas:"avatar" "identity" "line" "metrics" "button"; justify-items:start; }
       .share-rank-btn { width:100%; }
       .metric-grid { grid-template-columns:1fr 1fr; width:100%; }
       .filter-group { grid-template-columns:1fr; }
       .filter-label { height:auto; min-height:34px; border-right:0; border-bottom:1px solid rgba(255,255,255,.10); }
-      .filter-btn { min-height:40px; }
+      .filter-btn { min-height:44px; }
       .podium { grid-template-columns:1fr; }
       .board { border:0; background:transparent; box-shadow:none; min-height:0; }
+      .board-scroll-wrap { overflow-x:visible; }
       .board-header { display:none; }
       .board-body { overflow:visible; }
-      .row { grid-template-columns:44px 1fr 66px; grid-template-areas:"rank identity repl" "rank identity rate" "piece piece piece"; min-height:100px; margin-bottom:10px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.50); }
+      .row { grid-template-columns:44px 1fr 66px; grid-template-areas:"rank identity repl" "rank identity rate" "piece piece piece"; min-height:100px; margin-bottom:10px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.50); min-width:0; }
       .cell-rank { grid-area:rank; } .cell-identity { grid-area:identity; } .cell-rate { grid-area:rate; text-align:right; } .cell-repl { grid-area:repl; text-align:right; align-self:end; } .cell-piece { grid-area:piece; }
       .detail-card { grid-template-columns:1fr; place-items:center; }
       .detail-info { width:100%; }
       .detail-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:480px) {
+      /* Podium: scale down cards, truncate names */
+      .podium { grid-template-columns:1fr; gap:8px; }
+      .podium-card { padding:10px; }
+      .podium-avatar { width:40px; height:52px; flex-shrink:0; }
+      .podium-name { font-size:12px; }
+      .podium-role { font-size:10px; margin-bottom:5px; }
+      .podium-score { font-size:18px; }
+
+      /* Filter bar: ensure chips wrap and don't overflow */
+      .filter-deck { gap:8px; }
+      .filter-dd-trigger { min-height:44px; }
+      .filter-dd-label { font-size:9px; padding:0 10px; }
+      .filter-dd-value { font-size:10px; padding:0 8px; }
+
+      /* Table: on very narrow screens, hide the Hierarchy (piece) column.
+         The card-style rows (760px breakpoint) use grid-areas, so we
+         simply collapse the piece row to hidden. */
+      .cell-piece { display:none; }
+      .row { grid-template-areas:"rank identity repl" "rank identity rate"; grid-template-rows:auto auto; }
+
+      /* Typography minimums */
+      .name { font-size:13px; }
+      .role { font-size:10px; }
+      .score { font-size:20px; }
+
+      /* Standing strip compacted */
+      .your-name { font-size:clamp(16px,5vw,22px); }
+      .metric-grid { grid-template-columns:1fr 1fr; }
+
+      /* Safe area bottom on standing strip share button */
+      .share-rank-btn { padding-bottom:calc(12px + env(safe-area-inset-bottom)); min-height:calc(50px + env(safe-area-inset-bottom)); }
+
+      /* Back button larger touch area */
+      .rr-back-btn { padding: 12px 14px; }
+
+      /* Detail modal: full-width on very small screens */
+      .detail-card { padding:16px; gap:16px; }
+      .card-img-wrap { width:min(160px, 40vw); }
+    }
+    @media (max-width:380px) {
+      /* Prevent header logo overflow on very small devices */
+      .rr-logo-stack { gap:3px; }
+      .rr-logo2 { margin:8px 0; }
+      .rr-logo-text { font-size:14px; }
+      /* Shell fills width */
+      .rr-shell { width:96vw; }
     }
   </style>
 </head>
@@ -332,15 +388,17 @@
       <section class="empty-state" id="emptyState">No market files in this filter yet.</section>
 
       <section class="board">
-        <div class="board-header">
-          <div>Rank</div>
-          <div>Name</div>
-          <div>Hierarchy</div>
-          <div>Rate</div>
-          <div>Replaceability</div>
-        </div>
-        <div class="board-body" id="leaderboardRows">
-          <div class="board-loading" id="boardLoading">LOADING MARKET FILES…</div>
+        <div class="board-scroll-wrap">
+          <div class="board-header">
+            <div>Rank</div>
+            <div>Name</div>
+            <div>Hierarchy</div>
+            <div>Rate</div>
+            <div>Replaceability</div>
+          </div>
+          <div class="board-body" id="leaderboardRows">
+            <div class="board-loading" id="boardLoading">LOADING MARKET FILES…</div>
+          </div>
         </div>
       </section>
     </section>

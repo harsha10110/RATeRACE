@@ -16,7 +16,7 @@
       --rr-card-w: min(clamp(220px, 42vw, 420px), calc((100vh - 180px) * 1053 / 1470));
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scrollbar-width: none; -ms-overflow-style: none; }
+    html { scrollbar-width: none; -ms-overflow-style: none; overflow-x: hidden; }
     html::-webkit-scrollbar { display: none; }
     body {
       min-height: 100vh;
@@ -75,9 +75,11 @@
       width: 100%; background: #000;
     }
     .rr-top-pill, .rr-leader-pill {
-      font-family: var(--rr-pixel); font-size: clamp(15px, 1.45vw, 24px);
+      font-family: var(--rr-pixel); font-size: clamp(13px, 1.45vw, 24px);
       line-height: 1; letter-spacing: 0.05em; padding: 0.34em 0.62em 0.42em;
       white-space: nowrap; cursor: pointer;
+      min-height: 44px; min-width: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
     }
     .rr-top-pill { color: #000; background: #f4dd34; }
     .rr-leader-pill { color: #fff; background: var(--rr-blue); }
@@ -124,7 +126,7 @@
       opacity: 0; animation: rrRiseIn 600ms 130ms ease-out forwards;
     }
     .rr-card-wrap {
-      position: relative; width: var(--rr-card-w); aspect-ratio: 1053 / 1470;
+      position: relative; width: var(--rr-card-w); max-width: 100%; aspect-ratio: 1053 / 1470;
       transform: rotate(1deg); border-radius: 9px;
       filter: drop-shadow(0 0 26px rgba(255,255,255,0.20)) drop-shadow(0 34px 46px rgba(255,255,255,0.12));
       opacity: 0; animation: rrCardSettle 820ms 120ms cubic-bezier(.16,.95,.18,1) forwards;
@@ -199,7 +201,7 @@
       background: transparent; cursor: pointer;
     }
     .rr-tooltip {
-      position: fixed; z-index: 10000; max-width: 260px; padding: 10px 12px 11px;
+      position: fixed; z-index: 10000; max-width: min(260px, calc(100vw - 24px)); padding: 10px 12px 11px;
       background: rgba(5,5,5,0.96); border: 1px solid rgba(255,255,255,0.18);
       color: #fff; font-size: 11px; line-height: 1.35; pointer-events: none;
       transform: translate(-50%, calc(-100% - 14px)); opacity: 0; transition: opacity 120ms ease;
@@ -216,11 +218,13 @@
       text-align: center; text-transform: uppercase; text-shadow: 0 0 16px rgba(230,0,0,0.22);
     }
     .rr-cta-btn {
-      display: block; margin: 32px auto 0;
+      display: flex; align-items: center; justify-content: center;
+      margin: 32px auto 0;
       padding: 14px 36px; background: transparent;
       border: 1px solid rgba(255,255,255,0.72); color: #fff;
       font-family: var(--rr-pixel); font-size: 15px; letter-spacing: 0.08em;
       text-transform: uppercase; text-decoration: none; cursor: pointer;
+      min-height: 44px;
       transition: background 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
     }
     .rr-cta-btn:hover { background: #fff; color: #000; border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.14); }
@@ -229,7 +233,7 @@
     .rr-meter-panel { align-self: center; display: flex; flex-direction: column; gap: 30px; transform: translateY(-2px); }
     .rr-meter-card { position: relative; min-height: 180px; display: grid; place-items: center; }
     .rr-meter-svg {
-      width: 230px; height: 128px; overflow: visible;
+      width: min(230px, 100%); height: 128px; overflow: visible;
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.08)) drop-shadow(0 0 28px rgba(255,255,255,0.04));
     }
     .rr-meter-track { fill: none; stroke: rgba(255,255,255,0.14); stroke-width: 16; stroke-linecap: round; }
@@ -276,6 +280,7 @@
       width: min(100%, 330px); margin: 4px auto 0; padding: 12px;
       border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.025);
       cursor: pointer; transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+      min-height: 44px;
     }
     .rr-back-preview:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.42); background: rgba(255,255,255,0.045); }
     .rr-back-thumb {
@@ -300,6 +305,7 @@
     .rr-back-close {
       position: fixed; top: 22px; right: 28px; border: 0; background: transparent;
       color: var(--rr-red); font-size: 46px; line-height: 1; cursor: pointer; padding: 0; z-index: 10003;
+      min-height: 44px; min-width: 44px; display: flex; align-items: center; justify-content: center;
     }
     .rr-back-wrap { display: flex; flex-direction: column; align-items: center; gap: 22px; }
     .rr-back-large {
@@ -310,7 +316,7 @@
     .rr-back-coming { font-family: var(--rr-pixel); font-size: 36px; font-weight: 700; letter-spacing: 0.18em; color: #fff; text-transform: uppercase; }
 
     .rr-bottom-hint {
-      position: relative; z-index: 4; padding: 16px 16px 32px;
+      position: relative; z-index: 4; padding: 16px 16px calc(32px + env(safe-area-inset-bottom));
       text-align: center; color: rgba(255,255,255,0.46); font-size: 10px; letter-spacing: 0.06em; line-height: 1.4; pointer-events: none;
     }
     .rr-return-hook {
@@ -341,6 +347,27 @@
       .rr-meter-panel { grid-template-columns: 1fr; }
       .rr-meter-card { min-height: 162px; }
     }
+    @media (max-width: 480px) {
+      :root { --rr-card-w: min(82vw, 320px); }
+      .rr-final-header { gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+      .rr-final-layout { width: 94vw; padding-top: 12px; padding-bottom: 80px; }
+      .rr-section-title { font-size: 28px; margin-bottom: 20px; }
+      .rr-case-label { font-size: 9px; }
+      .rr-case-value { font-size: 13px; }
+      .rr-cta-btn { width: 100%; font-size: 13px; padding: 14px 20px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+      .rr-employee-file { font-size: 15px; margin-top: 28px; }
+      .rr-bottom-hint { font-size: 10px; }
+      .rr-meter-svg { width: min(220px, 90vw); }
+      .rr-rank-module { width: 100%; }
+      .rr-back-preview { width: 100%; }
+    }
+    @media (max-width: 380px) {
+      :root { --rr-card-w: min(88vw, 280px); }
+      .rr-final-header { gap: 6px; flex-wrap: wrap; padding-left: 8px; padding-right: 8px; }
+      .rr-top-pill, .rr-leader-pill { font-size: 12px; padding: 0.28em 0.5em 0.36em; }
+      .rr-header-logo-img { height: 20px; }
+      .rr-section-title { font-size: 24px; }
+    }
     /* RateDisplay — numbers only */
     #rrRateScore, #rrReplaceabilityScore { font-family: "RateDisplay", monospace; }
     #rrPercentileText { font-family: "RateDisplay", monospace; }
@@ -364,6 +391,7 @@
       position: absolute; top: 14px; right: 22px; border: 0; background: transparent;
       color: rgba(255,255,255,0.40); font-size: 36px; line-height: 1; cursor: pointer; padding: 0;
       transition: color 120ms ease; font-family: sans-serif;
+      min-height: 44px; min-width: 44px; display: flex; align-items: center; justify-content: center;
     }
     .rr-manifesto-close:hover { color: var(--rr-red); }
     .rr-manifesto-cols {
@@ -531,7 +559,7 @@
   </section>
 
   <div class="rr-bottom-hint">
-    Hover over the card elements to see what they represent.
+    Hover or tap card elements to see what they represent.
   </div>
 
   <div class="rr-tooltip" id="rrTooltip" role="tooltip"></div>
@@ -652,22 +680,65 @@
         }
       }
 
-      // Hotspot tooltips
+      // Hotspot tooltips — pointer (mouse) + touch support
       const tooltip = document.getElementById('rrTooltip');
+      let _activeTouch = null; // tracks which hotspot has touch-toggled the tooltip
+
+      function _showTooltip(spot, x, y) {
+        tooltip.textContent = '';
+        const b = document.createElement('b');
+        b.textContent = spot.dataset.title || '';
+        tooltip.appendChild(b);
+        tooltip.appendChild(document.createTextNode(spot.dataset.tooltip || ''));
+        tooltip.style.left = `${x}px`;
+        tooltip.style.top  = `${y}px`;
+        tooltip.classList.add('is-visible');
+      }
+
+      function _hideTooltip() {
+        tooltip.classList.remove('is-visible');
+        _activeTouch = null;
+      }
+
       document.querySelectorAll('.rr-card-hotspot').forEach(spot => {
-        spot.addEventListener('pointerenter', () => {
-          tooltip.textContent = '';
-          const b = document.createElement('b');
-          b.textContent = spot.dataset.title || '';
-          tooltip.appendChild(b);
-          tooltip.appendChild(document.createTextNode(spot.dataset.tooltip || ''));
-          tooltip.classList.add('is-visible');
+        // Mouse: classic hover behaviour
+        spot.addEventListener('pointerenter', e => {
+          if (e.pointerType === 'touch') return; // handled by pointerup below
+          _showTooltip(spot, e.clientX, e.clientY);
         });
         spot.addEventListener('pointermove', e => {
+          if (e.pointerType === 'touch') return;
           tooltip.style.left = `${e.clientX}px`;
           tooltip.style.top  = `${e.clientY}px`;
         });
-        spot.addEventListener('pointerleave', () => tooltip.classList.remove('is-visible'));
+        spot.addEventListener('pointerleave', e => {
+          if (e.pointerType === 'touch') return;
+          _hideTooltip();
+        });
+
+        // Touch: tap to toggle
+        spot.addEventListener('pointerup', e => {
+          if (e.pointerType !== 'touch') return;
+          e.stopPropagation(); // prevent document-level dismiss from firing immediately
+          if (_activeTouch === spot) {
+            // Tap same hotspot again — dismiss
+            _hideTooltip();
+          } else {
+            _activeTouch = spot;
+            // Position tooltip near the tap point, clamped to stay on-screen
+            const tipX = Math.min(e.clientX, window.innerWidth - 140);
+            const tipY = e.clientY;
+            _showTooltip(spot, tipX, tipY);
+          }
+        });
+      });
+
+      // Tap outside any hotspot → dismiss touch tooltip
+      document.addEventListener('pointerup', e => {
+        if (e.pointerType !== 'touch') return;
+        if (!e.target.closest('.rr-card-hotspot')) {
+          _hideTooltip();
+        }
       });
 
       // Meme back lightbox

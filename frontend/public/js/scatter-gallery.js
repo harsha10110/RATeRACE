@@ -397,6 +397,9 @@
         color: #ffffff;
         font-family: "Pixelify Sans", monospace;
         pointer-events: auto;
+        overflow: hidden;
+        padding-bottom: env(safe-area-inset-bottom);
+        box-sizing: border-box;
       }
 
       .rr-lead-stage {
@@ -406,24 +409,29 @@
         width: 350px;
         height: 549px;
         transform-origin: center center;
+        max-width: 100vw;
+        box-sizing: border-box;
       }
 
       .rr-lead-close {
         position: absolute;
         left: 326px;
         top: -54px;
-        width: 34px;
-        height: 34px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
         border: 0;
         background: transparent;
         color: #ff0000;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 42px;
-        line-height: 34px;
+        line-height: 44px;
         text-align: center;
         cursor: pointer;
         padding: 0;
         z-index: 3;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .rr-lead-panel {
@@ -435,6 +443,7 @@
         background: #1a1a1a;
         border: 2px dashed #ffffff;
         box-sizing: border-box;
+        max-width: calc(100vw - 20px);
       }
 
       .rr-lead-content {
@@ -443,6 +452,7 @@
         top: 0;
         width: 245px;
         height: 401px;
+        box-sizing: border-box;
       }
 
       .rr-lead-label {
@@ -461,6 +471,7 @@
         left: 0;
         width: 245px;
         height: 30px;
+        min-height: 44px;
         border: 0;
         outline: 0;
         border-radius: 2px;
@@ -468,10 +479,11 @@
         color: #1a1a1a;
         padding: 0 12px;
         font-family: "Pixelify Sans", monospace;
-        font-size: 10px;
+        font-size: 16px;
         box-sizing: border-box;
         appearance: none;
         -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .rr-lead-input::placeholder {
@@ -484,6 +496,7 @@
         cursor: pointer;
         text-decoration: underline;
         text-underline-offset: 2px;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .rr-hidden {
@@ -524,6 +537,7 @@
       .rr-lead-mini-button {
         width: 108px;
         height: 30px;
+        min-height: 44px;
         background: #000000;
         border: 0;
         color: #ffffff;
@@ -534,6 +548,7 @@
         justify-content: center;
         cursor: pointer;
         padding: 0;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .rr-linkedin-logo {
@@ -656,6 +671,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .rr-loading-spinner {
@@ -690,7 +707,10 @@
         font-size: 9px;
         letter-spacing: 0.1em;
         padding: 6px 14px;
+        min-height: 44px;
+        min-width: 44px;
         cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
 
       /* CARD VIEW */
@@ -700,7 +720,10 @@
         align-items: center;
         justify-content: center;
         padding: 16px 0 8px;
+        padding-bottom: calc(8px + env(safe-area-inset-bottom));
         gap: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .rr-card-image-wrap { display: none; }
@@ -748,6 +771,7 @@
         display: block;
         width: 100%;
         padding: 11px 0;
+        min-height: 44px;
         background: #ff0000;
         color: #fff;
         font-family: "Pixelify Sans", monospace;
@@ -759,6 +783,7 @@
         border: none;
         cursor: pointer;
         margin-bottom: 10px;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .rr-card-view-btn:hover { background: #cc0000; }
@@ -766,6 +791,8 @@
       .rr-logout-btn {
         width: 108px;
         height: 36px;
+        min-height: 44px;
+        min-width: 44px;
         background: #000;
         border: 1px solid #444;
         color: #fff;
@@ -774,6 +801,7 @@
         letter-spacing: 0.12em;
         cursor: pointer;
         margin-top: 14px;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-logout-btn:hover { border-color: #fff; }
 
@@ -788,7 +816,7 @@
 
       /* ── height overrides for new modes ── */
       .rr-lead-panel   { height: 440px; }
-      .rr-lead-content { height: 440px; overflow-y: auto; }
+      .rr-lead-content { height: 440px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
       /* ── ENTRY MODE ── */
       .rr-mode-entry:not(.rr-hidden) {
@@ -797,6 +825,8 @@
         align-items: center;
         justify-content: center;
         gap: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .rr-entry-headline {
         font-size: 15px;
@@ -815,6 +845,8 @@
       .rr-entry-btn {
         width: 108px;
         height: 36px;
+        min-height: 44px;
+        min-width: 44px;
         background: #000;
         border: 1px solid #444;
         color: #fff;
@@ -822,6 +854,7 @@
         font-size: 9px;
         letter-spacing: 0.12em;
         cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-entry-btn:hover { border-color: #fff; }
       .rr-entry-btn.rr-entry-primary {
@@ -842,10 +875,11 @@
       }
       .rr-el-li-btn {
         position: absolute; top: 68px; left: 0;
-        width: 245px; height: 34px;
+        width: 245px; height: 34px; min-height: 44px;
         background: #0a66c2; border: 0;
         color: #fff; font-family: "Pixelify Sans", monospace;
         font-size: 9px; letter-spacing: .12em; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-el-li-btn:hover { background: #0958a8; }
       .rr-el-or {
@@ -859,10 +893,11 @@
       .rr-el-code  { position: absolute; top: 224px; left: 0; width: 245px; }
       .rr-el-submit {
         position: absolute; top: 274px; left: 0;
-        width: 245px; height: 32px;
+        width: 245px; height: 32px; min-height: 44px;
         background: #fff; border: 0; color: #000;
         font-family: "Pixelify Sans", monospace;
         font-size: 10px; letter-spacing: .14em; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-el-submit:hover { background: #b90000; color: #fff; }
       .rr-el-error {
@@ -905,7 +940,9 @@
       .rr-cf-disclaimer-text strong { color: rgba(255,255,255,0.50); font-weight: 600; }
       .rr-cf-disclaimer-close {
         position: absolute; top: 5px; right: 6px; border: 0; background: transparent;
-        color: rgba(255,255,255,0.22); font-size: 14px; line-height: 1; cursor: pointer; padding: 0; font-family: sans-serif;
+        color: rgba(255,255,255,0.22); font-size: 14px; line-height: 1; cursor: pointer; padding: 4px; font-family: sans-serif;
+        min-width: 24px; min-height: 24px; display: flex; align-items: center; justify-content: center;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-cf-disclaimer-close:hover { color: rgba(255,255,255,0.60); }
       .rr-cf-bio-label   { position: absolute; top: 202px; left: 0; }
@@ -914,15 +951,17 @@
       .rr-cf-port  { position: absolute; top: 280px; left: 0; width: 245px; }
       .rr-cf-next {
         position: absolute; top: 324px; left: 0;
-        width: 245px; height: 32px;
+        width: 245px; height: 32px; min-height: 44px;
         background: #fff; border: 0; color: #000;
         font-family: "Pixelify Sans", monospace;
         font-size: 10px; letter-spacing: .14em; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-cf-next:hover { background: #b90000; color: #fff; }
       .rr-cf-back {
         position: absolute; top: 366px; left: 0;
         font-size: 8px; color: #555; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-cf-back:hover { color: #fff; }
 
@@ -960,17 +999,19 @@
       }
       .rr-uv-analyze {
         position: absolute; top: 280px; left: 0;
-        width: 245px; height: 32px;
+        width: 245px; height: 32px; min-height: 44px;
         background: #fff; border: 0; color: #000;
         font-family: "Pixelify Sans", monospace;
         font-size: 10px; letter-spacing: .14em;
         cursor: pointer; opacity: .3; pointer-events: none;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-uv-analyze.ready { opacity: 1; pointer-events: auto; }
       .rr-uv-analyze.ready:hover { background: #b90000; color: #fff; }
       .rr-uv-back {
         position: absolute; top: 328px; left: 0;
         font-size: 8px; color: #555; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-uv-back:hover { color: #fff; }
 
@@ -1304,7 +1345,9 @@
       .rr-top-pill, .rr-leader-pill {
         font-family: var(--rr-pixel); font-size: clamp(15px, 1.45vw, 24px);
         line-height: 1; letter-spacing: 0.05em; padding: 0.34em 0.62em 0.42em;
-        white-space: nowrap; cursor: pointer;
+        white-space: nowrap; cursor: pointer; min-height: 44px;
+        display: flex; align-items: center;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-top-pill { color: #000; background: #f4dd34; }
       .rr-leader-pill { color: #fff; background: var(--rr-blue); }
@@ -1441,11 +1484,12 @@
         gap: 14px; justify-content: center;
       }
       .rr-action-btn {
-        height: 58px; border: 1px solid rgba(255,255,255,0.72); background: rgba(0,0,0,0.25);
+        height: 58px; min-height: 44px; border: 1px solid rgba(255,255,255,0.72); background: rgba(0,0,0,0.25);
         color: #fff; font-family: var(--rr-pixel); font-size: 15px; line-height: 0.95;
         letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
         transition: transform 160ms ease, background 160ms ease, color 160ms ease,
                     border-color 160ms ease, box-shadow 160ms ease;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-action-btn:hover { transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.14); }
       .rr-action-btn.primary { border-color: #fff; background: #fff; color: #000; }
@@ -1467,8 +1511,9 @@
       }
       .rr-if-input {
         width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.18);
-        color: #fff; padding: 10px 12px; font-size: 13px; outline: none;
-        font-family: inherit; box-sizing: border-box;
+        color: #fff; padding: 10px 12px; font-size: 16px; outline: none;
+        font-family: inherit; box-sizing: border-box; min-height: 44px;
+        -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
       }
       .rr-if-input:focus { border-color: rgba(255,255,255,0.45); }
       .rr-if-actions { display: flex; gap: 10px; }
@@ -1491,6 +1536,7 @@
       .rr-if-preview.is-visible { display: block; }
       .rr-bottom-hint {
         position: relative; z-index: 4; padding: 16px 16px 32px;
+        padding-bottom: max(32px, env(safe-area-inset-bottom));
         text-align: center; color: rgba(255,255,255,0.46); font-size: 10px; letter-spacing: 0.06em; line-height: 1.4; pointer-events: none;
       }
       .rr-return-hook {
@@ -1575,6 +1621,8 @@
       .rr-back-close {
         position: fixed; top: 22px; right: 28px; border: 0; background: transparent;
         color: var(--rr-red); font-size: 46px; line-height: 1; cursor: pointer; padding: 0; z-index: 10003;
+        min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-back-wrap { display: flex; flex-direction: column; align-items: center; gap: 22px; }
       .rr-back-large {
@@ -1636,11 +1684,16 @@
         border: 1px solid rgba(255,255,255,0.20);
         background: linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015)),#060606;
         box-shadow: 0 0 80px rgba(0,0,0,0.92); padding: 36px 28px 28px;
+        max-width: 100%; box-sizing: border-box;
+        padding-bottom: max(28px, env(safe-area-inset-bottom));
       }
       .rr-share-close {
         position: absolute; top: 10px; right: 16px;
         border: 0; background: transparent; color: var(--rr-red);
         font-size: 38px; line-height: 1; cursor: pointer; padding: 0;
+        min-width: 44px; min-height: 44px;
+        display: flex; align-items: center; justify-content: center;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-share-preview {
         width: 100%; max-width: 200px; aspect-ratio: 1053/1470; overflow: hidden;
@@ -1659,6 +1712,7 @@
         font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
         cursor: pointer; transition: 160ms ease;
         display: flex; align-items: center; justify-content: center; gap: 10px;
+        -webkit-tap-highlight-color: transparent; text-decoration: none;
       }
       .rr-share-btn:hover { background: rgba(255,255,255,0.06); border-color: #fff; }
       .rr-share-btn.primary { border-color: #fff; background: #fff; color: #000; }
@@ -1698,12 +1752,17 @@
         background: linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01)),#050505;
         box-shadow: 0 0 120px rgba(0,0,0,0.98);
         padding: clamp(28px,3.5vh,44px) clamp(20px,3vw,40px) clamp(20px,3vh,36px);
+        padding-bottom: max(clamp(20px,3vh,36px), env(safe-area-inset-bottom));
         display: flex; flex-direction: column;
+        max-width: 100vw; box-sizing: border-box;
       }
       .rr-manifesto-close {
         position: absolute; top: 14px; right: 22px; border: 0; background: transparent;
         color: rgba(255,255,255,0.40); font-size: 36px; line-height: 1; cursor: pointer; padding: 0;
+        min-width: 44px; min-height: 44px;
+        display: flex; align-items: center; justify-content: center;
         transition: color 120ms ease; font-family: sans-serif;
+        -webkit-tap-highlight-color: transparent;
       }
       .rr-manifesto-close:hover { color: #e60000; }
       .rr-manifesto-cols {
@@ -1733,7 +1792,7 @@
         .rr-manifesto-cols { grid-template-columns: 1fr; overflow-y: visible; }
         .rr-manifesto-left { border-right: none; padding-right: 0; border-bottom: 1px solid rgba(255,255,255,0.09); padding-bottom: 16px; overflow-y: visible; }
         .rr-manifesto-body { overflow-y: visible; }
-        .rr-manifesto-panel { overflow-y: auto; height: auto; max-height: min(88vh, 820px); }
+        .rr-manifesto-panel { overflow-y: auto; -webkit-overflow-scrolling: touch; height: auto; max-height: min(88vh, 820px); }
       }
     `;
     document.head.appendChild(el);
