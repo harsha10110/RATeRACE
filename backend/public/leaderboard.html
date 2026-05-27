@@ -59,7 +59,7 @@
     .rr-back-btn:hover { color: #fff; }
     .rr-back-btn:active { opacity: 0.7; }
     /* RateDisplay — numbers only */
-    .rank, .podium-score, .cell-rate.score, .cell-repl.score { font-family: "RateDisplay", monospace; }
+    .rank, .cell-rate.score, .cell-repl.score { font-family: "RateDisplay", monospace; }
     .podium-card::after { font-family: "RateDisplay", monospace; }
     .your-code, #rrPercentileText { font-family: "RateDisplay", monospace; }
     .rr-logo-stack { display:flex; flex-direction:column; align-items:center; gap:6px; }
@@ -148,8 +148,6 @@
     .podium-avatar-ph { width:100%; height:100%; background:radial-gradient(circle at 50% 27%,#f1c5a2 0 18%,transparent 19%),radial-gradient(circle at 50% 20%,#5c35d6 0 22%,transparent 23%),linear-gradient(180deg,transparent 0 43%,#1d2030 43% 72%,transparent 72%),#eee8da; }
     .podium-name { display:block; margin-bottom:3px; color:#fff; font-family:var(--sans); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .podium-role { display:block; margin-bottom:8px; color:rgba(255,255,255,.48); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .podium-score { display:inline-flex; align-items:baseline; gap:7px; font-family:var(--pixel); color:var(--white); font-size:23px; line-height:1; }
-    .podium-score small { color:var(--red); font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
     .employment-dot { display:inline-block; width:6px; height:6px; background:var(--dot-color,rgba(255,255,255,.5)); margin-right:4px; flex:0 0 auto; }
     .empty-state { min-height:100px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.38); display:none; place-items:center; text-align:center; color:rgba(255,255,255,.48); font-size:12px; letter-spacing:.1em; text-transform:uppercase; }
     .empty-state.is-visible { display:grid; }
@@ -265,7 +263,6 @@
       .podium-avatar { width:40px; height:52px; flex-shrink:0; }
       .podium-name { font-size:12px; }
       .podium-role { font-size:10px; margin-bottom:5px; }
-      .podium-score { font-size:18px; }
 
       /* Filter bar: ensure chips wrap and don't overflow */
       .filter-deck { gap:8px; }
@@ -451,7 +448,6 @@
 
     // ── Helpers ──────────────────────────────────────────────────────────────
     const esc = v => String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-    const boardScore = r => r.rate - r.repl;
     const empColor  = s => ({employed:'var(--green)',unemployed:'var(--red)',retired:'var(--yellow)',intern:'var(--blue)'}[s]||'rgba(255,255,255,.5)');
     const empClass  = s => ({employed:'green',unemployed:'red',retired:'yellow',intern:'blue'}[s]||'');
     const empLabel  = s => ({employed:'Employed',unemployed:'Unemployed',retired:'Retired',intern:'Intern / Fresher'}[s]||s);
@@ -516,7 +512,6 @@
           <div>
             <span class="podium-name">${esc(r.name)}</span>
             <span class="podium-role"><span class="employment-dot" style="--dot-color:${empColor(r.employmentStatus)}"></span>${pieceSym(r.chessPiece)} ${esc(r.role||r.employmentStatus)}</span>
-            <span class="podium-score">${boardScore(r)}<small>score</small></span>
           </div>
         </article>`).join('');
       el.querySelectorAll('.podium-card').forEach(c => c.addEventListener('click', () => openDetail(c.dataset.code)));
