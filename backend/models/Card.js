@@ -56,4 +56,8 @@ const cardSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes
+cardSchema.index({ amCode: 1 }, { unique: true, sparse: true });
+cardSchema.index({ rate: -1, replaceability: 1 });
+
 module.exports = mongoose.model('Card', cardSchema);

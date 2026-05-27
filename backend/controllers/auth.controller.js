@@ -116,9 +116,12 @@ function linkedinAuth(req, res) {
   if (!config.LINKEDIN_CLIENT_ID) {
     return res.status(503).json({ error: 'LinkedIn OAuth not configured' });
   }
+  // Sanitise intent to a strict allowlist — reject any other query parameters
+  // that could be used as open-redirect targets after the OAuth round-trip.
   const intent = req.query.intent === 'existing' ? 'existing' : 'new';
   const nonce  = crypto.randomBytes(16).toString('hex');
   nonces.set(nonce, { intent, exp: Date.now() + 600_000 });
+  // State only carries intent + nonce — no user-supplied redirect target
   const state = Buffer.from(JSON.stringify({ intent, nonce })).toString('base64url');
   res.redirect(buildAuthUrl(state));
 }
@@ -138,7 +141,12 @@ async function linkedinCallback(req, res) {
 
     let intent, nonce;
     try {
-      ({ intent, nonce } = JSON.parse(Buffer.from(state, 'base64url').toString()));
+      const parsed = JSON.parse(Buffer.from(state, 'base64url').toString());
+      // Destructure only the known fields — ignore any attacker-injected keys
+      // (e.g. a "from" / "redirect" field) to prevent open-redirect abuse.
+      intent = parsed.intent;
+      nonce  = parsed.nonce;
+      if (typeof nonce !== 'string' || typeof intent !== 'string') throw new Error('bad_state');
     } catch {
       return res.redirect(`${frontendOrigin}?oauth_error=bad_state`);
     }
@@ -147,6 +155,11 @@ async function linkedinCallback(req, res) {
     nonces.delete(nonce);
     if (!nonceData || Date.now() > nonceData.exp) {
       return res.redirect(`${frontendOrigin}?oauth_error=expired`);
+    }
+
+    // Validate intent against what we stored — prevents tampering
+    if (nonceData.intent !== intent) {
+      return res.redirect(`${frontendOrigin}?oauth_error=bad_state`);
     }
 
     const tokenData  = await exchangeCode(code);

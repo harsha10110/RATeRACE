@@ -13,7 +13,12 @@ const TEMPLATE_HTML = path.join(TEMPLATES_DIR, 'rate-card.html');
 let browser = null;
 
 async function getBrowser() {
-  if (browser) return browser;
+  if (browser) {
+    if (browser.isConnected()) return browser;
+    // Browser process died (OOM, signal, etc.) — discard stale handle
+    logger.warn('Puppeteer browser disconnected — relaunching');
+    browser = null;
+  }
   browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
@@ -42,8 +47,17 @@ async function renderCard(cardData) {
 
   fs.writeFileSync(tmpPath, injected, 'utf8');
 
-  const b    = await getBrowser();
-  const page = await b.newPage();
+  let b;
+  let page;
+  try {
+    b    = await getBrowser();
+    page = await b.newPage();
+  } catch (launchErr) {
+    // Browser failed to launch or open a new page — clear the cached handle so the
+    // next request triggers a fresh launch rather than reusing the broken browser.
+    browser = null;
+    throw launchErr;
+  }
 
   try {
     await page.setViewport({ width: 1053, height: 1470, deviceScaleFactor: 2 });

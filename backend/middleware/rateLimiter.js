@@ -42,4 +42,21 @@ const authLimiter = rateLimit({
   },
 });
 
-module.exports = { scoreLimiter, cardLimiter, authLimiter };
+// 60 requests per 15 minutes per IP for the public leaderboard endpoint
+const leaderboardLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  keyGenerator: (req) => req.ip,
+  standardHeaders: true,
+  legacyHeaders:   false,
+  handler: (_req, res) => {
+    res.status(429).json({
+      error: {
+        code:    'RATE_LIMITED',
+        message: 'Too many requests, slow down.',
+      },
+    });
+  },
+});
+
+module.exports = { scoreLimiter, cardLimiter, authLimiter, leaderboardLimiter };

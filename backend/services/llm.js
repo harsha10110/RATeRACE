@@ -200,9 +200,13 @@ async function complete(systemPrompt, userPrompt, { json = false, model = DEFAUL
     try {
       const result = await completeGemini(systemPrompt, userPrompt, { json, model });
       return finalise(result, 'gemini', model, userId, callType, t0);
-    } catch {
+    } catch (finalErr) {
+      logger.error(
+        { error: finalErr.message, status: finalErr.status ?? finalErr.statusCode ?? null, type: finalErr.constructor?.name },
+        'Both Gemini and Groq failed — all providers exhausted'
+      );
       throw Object.assign(
-        new Error('Both AI providers are currently unavailable. Please try again in a few minutes.'),
+        new Error('Our AI scoring service is temporarily overloaded. Please try again in a few minutes.'),
         { status: 503 }
       );
     }

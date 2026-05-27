@@ -16,6 +16,8 @@ const app = express();
 app.use(helmet({
   contentSecurityPolicy: false,
   referrerPolicy: { policy: 'no-referrer' },
+  frameguard: { action: 'deny' },
+  hsts: { maxAge: 15552000, includeSubDomains: true },
 }));
 
 const specificOrigin = config.FRONTEND_ORIGIN && config.FRONTEND_ORIGIN !== '*';

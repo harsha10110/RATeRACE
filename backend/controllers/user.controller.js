@@ -51,6 +51,16 @@ async function updatePhoto(req, res, next) {
     if (!portraitUrl) {
       return res.status(400).json({ error: { code: 'BAD_REQUEST', message: 'portraitUrl is required' } });
     }
+    // SSRF prevention: only allow http/https URLs
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(portraitUrl);
+    } catch {
+      parsedUrl = null;
+    }
+    if (!parsedUrl || (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:')) {
+      return res.status(400).json({ error: { code: 'INVALID_URL', message: 'portraitUrl must be a valid http/https URL' } });
+    }
     user.portraitUrl = portraitUrl;
     user.photoLocked = true;
     await user.save();
