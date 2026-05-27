@@ -1287,13 +1287,19 @@
         position: fixed; top: 22px; left: 28px; z-index: 10001;
         border: 0; background: transparent; color: var(--rr-red);
         font-size: 36px; line-height: 1; cursor: pointer; padding: 0;
-        font-family: var(--rr-pixel);
+        font-family: var(--rr-pixel); min-width: 44px; min-height: 44px;
+        display: flex; align-items: center;
+      }
+      @media (max-width: 620px) {
+        .rr-modal-close { font-size: 22px; top: 14px; left: 14px; }
       }
       .rr-final-header {
         position: sticky; top: 0;
         display: flex; align-items: center; justify-content: center;
         gap: clamp(28px, 4.6vw, 78px); z-index: 15; user-select: none;
-        padding-top: clamp(18px, 2.5vw, 34px); width: 100%;
+        padding-top: clamp(14px, 2vw, 28px);
+        padding-bottom: clamp(14px, 2vw, 28px);
+        width: 100%; background: #000;
       }
       .rr-top-pill, .rr-leader-pill {
         font-family: var(--rr-pixel); font-size: clamp(15px, 1.45vw, 24px);
@@ -1709,7 +1715,7 @@
         border-right: 1px solid rgba(255,255,255,0.09);
         padding-right: clamp(20px,3vw,40px);
         display: flex; flex-direction: column; justify-content: space-between;
-        overflow: hidden;
+        overflow-y: auto; overscroll-behavior: contain;
       }
       .rr-manifesto-rr-logo { height: clamp(32px,3.5vw,48px); width: auto; display: block; margin-bottom: clamp(28px,3.5vh,44px); }
       .rr-manifesto-rule { border: none; border-top: 1px solid rgba(255,255,255,0.18); margin: 0 0 16px; }
@@ -1717,15 +1723,17 @@
       .rr-manifesto-body {
         font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: clamp(12px,1.05vw,14.5px); line-height: 1.78;
-        color: rgba(255,255,255,0.72); letter-spacing: 0.01em; overflow: hidden;
+        color: rgba(255,255,255,0.72); letter-spacing: 0.01em; overflow-y: auto; overscroll-behavior: contain;
       }
       .rr-manifesto-body p { margin: 0 0 clamp(10px,1.2vh,16px); }
       .rr-manifesto-body p:last-child { margin-bottom: 0; }
       .rr-manifesto-left .rr-manifesto-body { color: #e60000; }
       .rr-manifesto-cols > .rr-manifesto-body > p:last-child { color: #e60000; }
       @media (max-width: 620px) {
-        .rr-manifesto-cols { grid-template-columns: 1fr; }
-        .rr-manifesto-left { border-right: none; padding-right: 0; border-bottom: 1px solid rgba(255,255,255,0.09); padding-bottom: 16px; }
+        .rr-manifesto-cols { grid-template-columns: 1fr; overflow-y: visible; }
+        .rr-manifesto-left { border-right: none; padding-right: 0; border-bottom: 1px solid rgba(255,255,255,0.09); padding-bottom: 16px; overflow-y: visible; }
+        .rr-manifesto-body { overflow-y: visible; }
+        .rr-manifesto-panel { overflow-y: auto; height: auto; max-height: min(88vh, 820px); }
       }
     `;
     document.head.appendChild(el);
@@ -1745,14 +1753,14 @@
         <div class="rr-manifesto-cols">
           <div class="rr-manifesto-left">
             <div>
-              <img class="rr-manifesto-rr-logo" src="${BACKEND_URL}/rateracelogo.png" alt="RATeRACE">
+              <img class="rr-manifesto-rr-logo" src="/ratrace-logo.png" alt="RATeRACE">
               <hr class="rr-manifesto-rule">
               <div class="rr-manifesto-body">
                 <p>Growing up is often the slow act of surrendering to circumstances, systems, people, and realities you can no longer afford to ignore.</p>
               </div>
             </div>
             <div class="rr-manifesto-am-footer">
-              <img src="${BACKEND_URL}/adultmoneylogo.png" width="28" height="28" alt="AdultMoney">
+              <img src="/adultmoney-header-logo.png" width="28" height="28" alt="AdultMoney">
             </div>
           </div>
           <div class="rr-manifesto-body">
@@ -1814,7 +1822,6 @@
         </aside>
 
         <section class="rr-card-stage" aria-label="Generated card">
-          <p class="rr-verdict-line">THE MARKET HAS ISSUED A VERDICT.</p>
           <div class="rr-card-wrap" id="rrCardWrap">
             <img id="rrFinalCardImage" class="rr-final-card-img" alt="Generated RATe RACE card" />
             <div class="rr-generated-card-fallback" aria-hidden="true">
@@ -2082,7 +2089,8 @@
     // ── Inline form helpers ──────────────────────────────────────────────────
     function showCardStageForm(formEl) {
       const stage = overlay.querySelector('.rr-card-stage');
-      stage.querySelector('.rr-verdict-line').style.visibility = 'hidden';
+      const vl = stage.querySelector('.rr-verdict-line');
+      if (vl) vl.style.visibility = 'hidden';
       stage.querySelector('#rrCardWrap').style.display = 'none';
       stage.querySelector('.rr-employee-file').style.display = 'none';
       stage.querySelector('.rr-actions').style.display = 'none';
@@ -2095,7 +2103,8 @@
       const stage = overlay.querySelector('.rr-card-stage');
       const form  = stage.querySelector('.rr-inline-form');
       if (form) form.remove();
-      stage.querySelector('.rr-verdict-line').style.visibility = '';
+      const vl2 = stage.querySelector('.rr-verdict-line');
+      if (vl2) vl2.style.visibility = '';
       stage.querySelector('#rrCardWrap').style.display = '';
       stage.querySelector('.rr-employee-file').style.display = '';
       stage.querySelector('.rr-actions').style.display = '';
@@ -2879,9 +2888,10 @@
 
     ctx.restore();
 
+    const touchPad = isMobileViewport() ? Math.max(0, (44 - h) / 2) : 0;
     headerBtnHit = {
-      manifesto:   { x: manifestoX,   y, w: manifestoW,   h },
-      leaderboard: { x: leaderboardX, y, w: leaderboardW, h },
+      manifesto:   { x: manifestoX   - touchPad, y: y - touchPad, w: manifestoW   + touchPad * 2, h: h + touchPad * 2 },
+      leaderboard: { x: leaderboardX - touchPad, y: y - touchPad, w: leaderboardW + touchPad * 2, h: h + touchPad * 2 },
     };
   }
 
@@ -4207,7 +4217,10 @@
       if (hit) {
         openImagePreview(hit);
       } else if (drag.moved < 8) {
-        if (clickHeaderButton(pointer.x, pointer.y)) {
+        const rect = canvas.getBoundingClientRect();
+        const rawX = drag.clientX - rect.left;
+        const rawY = drag.clientY - rect.top;
+        if (clickHeaderButton(rawX, rawY)) {
           // handled
         } else if (!clickHeroButton(pointer.x, pointer.y)) {
           clearPinnedPreview();

@@ -3,8 +3,11 @@ import { IMAGEKIT_URL, SCATTER_PRIORITY, SCATTER_TR } from '@/lib/config';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'RATe RACE — SOOT Scatter Gallery',
+  title: 'adultmoney — RATE RACE',
   description: 'Rate your AI exposure. Know your worth.',
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 // Priority images from scatter-gallery.js — preload these before any JS runs.
