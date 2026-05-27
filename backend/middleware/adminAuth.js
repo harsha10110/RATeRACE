@@ -8,7 +8,7 @@ function adminAuth(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   try {
-    const payload = jwt.verify(header.slice(7), config.JWT_SECRET);
+    const payload = jwt.verify(header.slice(7), config.JWT_SECRET, { algorithms: ['HS256'] });
     if (!payload.admin) {
       return res.status(403).json({ error: 'Forbidden' });
     }

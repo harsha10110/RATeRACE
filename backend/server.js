@@ -18,11 +18,12 @@ app.use(helmet({
   referrerPolicy: { policy: 'no-referrer' },
 }));
 
+const specificOrigin = config.FRONTEND_ORIGIN && config.FRONTEND_ORIGIN !== '*';
 app.use(cors({
   origin: config.FRONTEND_ORIGIN,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  credentials: specificOrigin,
 }));
 
 app.use(express.json({ limit: '1mb' }));

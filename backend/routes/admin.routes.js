@@ -1,4 +1,5 @@
 'use strict';
+const crypto           = require('crypto');
 const express          = require('express');
 const path             = require('path');
 const jwt              = require('jsonwebtoken');
@@ -23,7 +24,11 @@ router.get('/', (_req, res) => {
 // ── Login ─────────────────────────────────────────────────────────────────────
 router.post('/api/auth', authLimiter, (req, res) => {
   const { secret } = req.body;
-  if (!secret || secret !== config.ADMIN_SECRET) {
+  const expected = Buffer.from(config.ADMIN_SECRET);
+  const provided = Buffer.from(typeof secret === 'string' ? secret : '');
+  const valid = provided.length === expected.length &&
+    crypto.timingSafeEqual(provided, expected);
+  if (!valid) {
     return res.status(401).json({ error: 'Invalid secret' });
   }
   const token = jwt.sign({ admin: true }, config.JWT_SECRET, { expiresIn: '8h' });

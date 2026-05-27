@@ -215,7 +215,12 @@ function enforceEnums(result) {
 
 async function scoreProfile(profile, userId = null) {
   const raw    = await complete(SYSTEM, buildPrompt(profile), { json: true, userId, callType: 'score' });
-  const result = JSON.parse(raw);
+  let result;
+  try {
+    result = JSON.parse(raw);
+  } catch {
+    throw Object.assign(new Error('Scoring service returned invalid JSON — please try again'), { status: 502 });
+  }
 
   // ── Clamp numeric fields ──────────────────────────────────────────────
   result.rate                     = clamp(result.rate, 13, 99);

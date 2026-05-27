@@ -8,7 +8,7 @@ function auth(req, res, next) {
     return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Missing token' } });
   }
   try {
-    req.user = jwt.verify(header.slice(7), config.JWT_SECRET);
+    req.user = jwt.verify(header.slice(7), config.JWT_SECRET, { algorithms: ['HS256'] });
     next();
   } catch {
     res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Invalid or expired token' } });

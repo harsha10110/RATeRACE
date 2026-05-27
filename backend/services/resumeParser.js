@@ -21,7 +21,13 @@ function buildPrompt(text) {
 async function parseResume(pdfBuffer, userId = null) {
   const { text } = await pdfParse(pdfBuffer);
   const raw = await complete(SYSTEM, buildPrompt(text), { json: true, userId, callType: 'resume_parse' });
-  return { profile: JSON.parse(raw), resumeText: text };
+  let profile;
+  try {
+    profile = JSON.parse(raw);
+  } catch {
+    throw Object.assign(new Error('Resume parser returned invalid JSON — please try again'), { status: 502 });
+  }
+  return { profile, resumeText: text };
 }
 
 module.exports = { parseResume };

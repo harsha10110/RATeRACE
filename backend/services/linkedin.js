@@ -22,7 +22,11 @@ async function parseLinkedIn(urlOrText, userId = null) {
     throw Object.assign(new Error('urlOrText is required'), { status: 400 });
   }
   const raw = await complete(SYSTEM, buildPrompt(urlOrText.trim()), { json: true, userId, callType: 'linkedin_parse' });
-  return JSON.parse(raw);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw Object.assign(new Error('LinkedIn parser returned invalid JSON — please try again'), { status: 502 });
+  }
 }
 
 module.exports = { parseLinkedIn };

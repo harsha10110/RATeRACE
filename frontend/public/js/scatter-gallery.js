@@ -2340,7 +2340,11 @@
     overlay.querySelectorAll('.rr-card-hotspot').forEach(spot => {
       spot.addEventListener('pointerenter', () => {
         if (!tooltip) return;
-        tooltip.innerHTML = `<b>${spot.dataset.title || ''}</b>${spot.dataset.tooltip || ''}`;
+        tooltip.textContent = '';
+        const b = document.createElement('b');
+        b.textContent = spot.dataset.title || '';
+        tooltip.appendChild(b);
+        tooltip.appendChild(document.createTextNode(spot.dataset.tooltip || ''));
         tooltip.classList.add('is-visible');
       });
       spot.addEventListener('pointermove', e => {
