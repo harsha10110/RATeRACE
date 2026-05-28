@@ -2432,26 +2432,56 @@
     const existing = document.getElementById('rrPrivacyOverlay');
     if (existing) existing.remove();
 
+    const isMobile = window.innerWidth <= 480;
+
     const overlay = document.createElement('div');
     overlay.id = 'rrPrivacyOverlay';
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;';
 
     const panel = document.createElement('div');
-    panel.style.cssText = 'max-width:680px;width:90%;max-height:80vh;margin:auto;background:#111;border:1px solid rgba(255,255,255,0.15);border-radius:6px;display:flex;flex-direction:column;overflow:hidden;';
+    panel.style.cssText = [
+      'max-width:640px',
+      'width:' + (isMobile ? '96%' : '92%'),
+      'max-height:82vh',
+      'background:#0a0a0a',
+      'border:1px solid rgba(255,255,255,0.12)',
+      'border-radius:4px',
+      'display:flex',
+      'flex-direction:column',
+      'overflow:hidden',
+    ].join(';');
 
     const header = document.createElement('div');
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.12);flex-shrink:0;';
+    header.style.cssText = [
+      'display:flex',
+      'align-items:center',
+      'justify-content:space-between',
+      'padding:' + (isMobile ? '12px 16px' : '16px 20px'),
+      'border-bottom:1px solid rgba(255,255,255,0.1)',
+      'flex-shrink:0',
+    ].join(';');
     const title = document.createElement('span');
     title.textContent = 'PRIVACY POLICY';
-    title.style.cssText = 'font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:0.08em;';
+    title.style.cssText = 'font-family:"Pixelify Sans",monospace;font-size:14px;letter-spacing:0.12em;color:#fff;text-transform:uppercase;';
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '×';
-    closeBtn.style.cssText = 'background:none;border:none;color:rgba(255,255,255,0.6);font-size:22px;line-height:1;cursor:pointer;padding:0 4px;';
+    closeBtn.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;';
+    closeBtn.addEventListener('mouseenter', () => { closeBtn.style.color = '#fff'; });
+    closeBtn.addEventListener('mouseleave', () => { closeBtn.style.color = 'rgba(255,255,255,0.5)'; });
     header.appendChild(title);
     header.appendChild(closeBtn);
 
     const body = document.createElement('div');
-    body.style.cssText = 'overflow-y:auto;padding:24px 28px;-webkit-overflow-scrolling:touch;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:rgba(255,255,255,0.85);';
+    body.style.cssText = [
+      'overflow-y:auto',
+      '-webkit-overflow-scrolling:touch',
+      'padding:' + (isMobile ? '16px 18px' : '20px 24px'),
+      'flex:1',
+      'font-family:Arial,Helvetica,sans-serif',
+      'font-size:12.5px',
+      'line-height:1.7',
+      'color:rgba(255,255,255,0.72)',
+    ].join(';');
 
     const policyLines = [
       'Privacy Policy for RATeRACE',
@@ -2788,31 +2818,59 @@
       'Website: adultmoney.club',
     ];
 
-    // Render lines: section headings (start with a digit followed by ". ") get bolder styling
+    // Render lines: distinguish section headings, metadata lines, and body paragraphs
     const sectionHeadingRe = /^\d+\.\s/;
+    const metadataRe = /^(Effective Date|Website|Contact Email|Operator):/;
     policyLines.forEach(line => {
       if (line === '') {
-        body.appendChild(document.createElement('br'));
+        // skip blank lines — handled by paragraph margins
+        return;
       } else if (sectionHeadingRe.test(line)) {
         const el = document.createElement('p');
         el.textContent = line;
-        el.style.cssText = 'font-weight:700;color:#fff;margin:12px 0 4px;';
+        el.style.cssText = 'font-family:"Pixelify Sans",monospace;font-size:12px;color:#fff;letter-spacing:0.08em;margin:18px 0 6px;';
+        body.appendChild(el);
+      } else if (metadataRe.test(line)) {
+        const el = document.createElement('p');
+        el.textContent = line;
+        el.style.cssText = 'color:rgba(255,255,255,0.4);font-size:11.5px;margin-bottom:4px;';
         body.appendChild(el);
       } else {
         const el = document.createElement('p');
         el.textContent = line;
-        el.style.cssText = 'margin:2px 0;';
+        el.style.cssText = 'margin:0 0 10px;';
         body.appendChild(el);
       }
     });
 
+    // Footer with close button
+    const footer = document.createElement('div');
+    footer.style.cssText = 'padding:14px 20px;border-top:1px solid rgba(255,255,255,0.1);flex-shrink:0;';
+    const footerBtn = document.createElement('button');
+    footerBtn.textContent = 'CLOSE';
+    footerBtn.style.cssText = [
+      'width:100%',
+      'padding:14px',
+      'background:transparent',
+      'border:1px solid rgba(255,255,255,0.2)',
+      'color:#fff',
+      'font-family:"Pixelify Sans",monospace',
+      'font-size:15px',
+      'letter-spacing:0.1em',
+      'text-transform:uppercase',
+      'cursor:pointer',
+    ].join(';');
+    footer.appendChild(footerBtn);
+
     panel.appendChild(header);
     panel.appendChild(body);
+    panel.appendChild(footer);
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
 
     function closeOverlay() { overlay.remove(); }
     closeBtn.addEventListener('click', closeOverlay);
+    footerBtn.addEventListener('click', closeOverlay);
     overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
   }
 
@@ -2941,20 +2999,20 @@
           </div>
 
           <!-- PRIVACY GATE -->
-          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden">
-            <p style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:20px;">
+          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden" style="padding:0 4px;">
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:20px;">
               Before continuing, please review our Privacy Policy. By creating your card, you agree that we may collect and process your profile data as described.
             </p>
             <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:24px;">
               <input type="checkbox" id="rrPrivacyCheck" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#e60000;">
-              <span style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.5;">
-                I have read and agree to the <a id="rrPrivacyLink" href="#" style="color:#e60000;text-decoration:underline;font-family:Arial,sans-serif;">Privacy Policy</a>
+              <span style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;">
+                I have read and agree to the <a id="rrPrivacyLink" href="#" style="color:#e60000;text-decoration:underline;font-family:Arial,Helvetica,sans-serif;font-weight:normal;">Privacy Policy</a>
               </span>
             </label>
-            <button id="rrPrivacyContinue" disabled style="width:100%;padding:14px;background:#e60000;color:#fff;border:none;font-family:'Pixelify Sans',monospace;font-size:15px;letter-spacing:0.08em;cursor:not-allowed;opacity:0.5;transition:opacity 200ms,cursor 200ms;">
+            <button id="rrPrivacyContinue" disabled style="width:100%;padding:14px;background:#e60000;color:#fff;border:none;font-family:'Pixelify Sans',monospace;font-size:15px;letter-spacing:0.1em;text-transform:uppercase;cursor:not-allowed;opacity:0.35;transition:opacity 200ms;">
               CONTINUE WITH LINKEDIN
             </button>
-            <button id="rrPrivacyBack" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:none;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;font-size:13px;cursor:pointer;text-align:center;">
+            <button id="rrPrivacyBack" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:none;color:rgba(255,255,255,0.45);font-family:Arial,Helvetica,sans-serif;font-size:13px;cursor:pointer;text-align:center;transition:color 150ms;">
               ← Back
             </button>
           </div>
@@ -3056,10 +3114,14 @@
         privacyContinue.style.cursor  = 'pointer';
       } else {
         privacyContinue.disabled = true;
-        privacyContinue.style.opacity = '0.5';
+        privacyContinue.style.opacity = '0.35';
         privacyContinue.style.cursor  = 'not-allowed';
       }
     });
+
+    // Back button hover
+    privacyBack.addEventListener('mouseenter', () => { privacyBack.style.color = 'rgba(255,255,255,0.8)'; });
+    privacyBack.addEventListener('mouseleave', () => { privacyBack.style.color = 'rgba(255,255,255,0.45)'; });
 
     privacyLink.addEventListener('click', e => {
       e.preventDefault();
@@ -4921,7 +4983,7 @@
     wrap.id = 'rr-contact-wrap';
     const link = document.createElement('a');
     link.href = 'mailto:clubadultmoney@gmail.com';
-    link.textContent = 'clubadultmoney@gmail.com';
+    link.textContent = 'Contact Us';
     wrap.appendChild(link);
     document.body.appendChild(wrap);
   })();
