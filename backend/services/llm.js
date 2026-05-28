@@ -206,7 +206,7 @@ async function complete(systemPrompt, userPrompt, { json = false, model = DEFAUL
         'Both Gemini and Groq failed — all providers exhausted'
       );
       throw Object.assign(
-        new Error('Our AI scoring service is temporarily overloaded. Please try again in a few minutes.'),
+        new Error('Both AI providers are currently unavailable. Please try again in a few minutes.'),
         { status: 503 }
       );
     }

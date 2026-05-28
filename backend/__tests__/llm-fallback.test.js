@@ -62,6 +62,19 @@ describe('classifyGeminiError', () => {
     expect(classifyGeminiError(err)).toBe('exhausted');
   });
 
+  test('429 with generate_requests_per_day (newer Gemini models / low RPD) → exhausted', () => {
+    const err = geminiError(
+      "RESOURCE_EXHAUSTED: Quota exceeded for quota metric 'generate_requests_per_day' and limit name 'generate_requests_per_day-FreeTier'",
+      429
+    );
+    expect(classifyGeminiError(err)).toBe('exhausted');
+  });
+
+  test('429 RESOURCE_EXHAUSTED with RPD in details (experimental models) → exhausted', () => {
+    const err = geminiError('[429] RESOURCE_EXHAUSTED: requests_per_day limit reached for this model', 429);
+    expect(classifyGeminiError(err)).toBe('exhausted');
+  });
+
   test('429 without day reference → transient (per-minute rate limit)', () => {
     const err = geminiError('[429 Too Many Requests] Resource has been exhausted', 429);
     expect(classifyGeminiError(err)).toBe('transient');
