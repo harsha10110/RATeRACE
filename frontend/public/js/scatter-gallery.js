@@ -2436,7 +2436,7 @@
 
     const overlay = document.createElement('div');
     overlay.id = 'rrPrivacyOverlay';
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;';
+    overlay.style.cssText = 'position:fixed;inset:0;height:100vh;z-index:99999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;';
 
     const panel = document.createElement('div');
     panel.style.cssText = [
@@ -2999,17 +2999,17 @@
           </div>
 
           <!-- PRIVACY GATE -->
-          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden" style="padding:0 4px;">
+          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden" style="padding:0 4px;display:flex;flex-direction:column;justify-content:center;">
             <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:20px;">
               Before continuing, please review our Privacy Policy. By creating your card, you agree that we may collect and process your profile data as described.
             </p>
             <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:24px;">
-              <input type="checkbox" id="rrPrivacyCheck" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#e60000;">
+              <input type="checkbox" id="rrPrivacyCheck" checked style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#e60000;">
               <span style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;">
                 I have read and agree to the <a id="rrPrivacyLink" href="#" style="color:#e60000;text-decoration:underline;font-family:Arial,Helvetica,sans-serif;font-weight:normal;">Privacy Policy</a>
               </span>
             </label>
-            <button id="rrPrivacyContinue" disabled style="width:100%;padding:14px;background:#e60000;color:#fff;border:none;font-family:'Pixelify Sans',monospace;font-size:15px;letter-spacing:0.1em;text-transform:uppercase;cursor:not-allowed;opacity:0.35;transition:opacity 200ms;">
+            <button id="rrPrivacyContinue" style="width:100%;padding:14px;background:#e60000;color:#fff;border:none;font-family:'Pixelify Sans',monospace;font-size:15px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;opacity:1;transition:opacity 200ms;">
               CONTINUE WITH LINKEDIN
             </button>
             <button id="rrPrivacyBack" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:none;color:rgba(255,255,255,0.45);font-family:Arial,Helvetica,sans-serif;font-size:13px;cursor:pointer;text-align:center;transition:color 150ms;">
@@ -4955,26 +4955,15 @@
     styleEl.textContent = [
       '#rr-contact-wrap {',
       '  position: fixed;',
-      '  z-index: 9000;',
-      '  pointer-events: none;',
+      '  top: 18px;',
+      '  right: 24px;',
+      '  z-index: 10001;',
       '}',
       '#rr-contact-wrap a {',
-      '  pointer-events: all;',
       '  font-family: Arial, sans-serif;',
       '  font-size: 14px;',
       '  text-decoration: underline;',
       '  color: #e60000;',
-      '}',
-      '@media (min-width: 481px) {',
-      '  #rr-contact-wrap { top: 18px; right: 24px; bottom: auto; left: auto; }',
-      '}',
-      '@media (max-width: 480px) {',
-      '  #rr-contact-wrap {',
-      '    bottom: calc(16px + env(safe-area-inset-bottom));',
-      '    left: 0; right: 0;',
-      '    text-align: center;',
-      '    top: auto;',
-      '  }',
       '}',
     ].join('\n');
     document.head.appendChild(styleEl);
