@@ -5,9 +5,6 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'adultmoney — RATE RACE',
   description: 'Rate your AI exposure. Know your worth.',
-  icons: {
-    icon: '/favicon.png',
-  },
 };
 
 export const viewport: Viewport = {
