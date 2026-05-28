@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     portraitUrl:         { type: String, default: null },
     linkedinPortraitUrl: { type: String, default: null },
     photoLocked:         { type: Boolean, default: false },
+    privacyAcceptedAt:   { type: Date, default: null },
   },
   { timestamps: true }
 );

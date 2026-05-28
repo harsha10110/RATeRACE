@@ -1085,10 +1085,14 @@
 
       if (!res.ok) return;
 
-      leadModal.token    = stored.token;
-      leadModal.cardId   = stored.cardId   || null;
-      leadModal.imageUrl = stored.imageUrl || null;
-      leadModal.amCode   = stored.amCode   || null;
+      let meData = null;
+      try { meData = await res.json(); } catch (_) {}
+
+      leadModal.token           = stored.token;
+      leadModal.cardId          = stored.cardId   || null;
+      leadModal.imageUrl        = stored.imageUrl || null;
+      leadModal.amCode          = stored.amCode   || null;
+      leadModal.privacyAccepted = !!(meData && meData.privacyAcceptedAt);
 
       // Refresh card data in case imageUrl or amCode changed server-side
       if (stored.amCode) {
@@ -1116,6 +1120,15 @@
     try {
       const data = await apiGet(`/api/auth/linkedin/exchange?code=${encodeURIComponent(code)}`);
       leadModal.token = data.token;
+
+      // Record privacy acceptance in DB if pending
+      if (sessionStorage.getItem('rrPrivacyPending') === '1') {
+        sessionStorage.removeItem('rrPrivacyPending');
+        fetch(`${BACKEND_URL}/api/user/privacy`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + data.token }
+        }).catch(() => {}); // fire-and-forget
+      }
 
       if (data.isNew) {
         const el = leadModal.el;
@@ -2414,6 +2427,395 @@
     showToast('Link copied');
   }
 
+  function openPrivacyPolicyOverlay() {
+    // Remove any existing overlay
+    const existing = document.getElementById('rrPrivacyOverlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'rrPrivacyOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;';
+
+    const panel = document.createElement('div');
+    panel.style.cssText = 'max-width:680px;width:90%;max-height:80vh;margin:auto;background:#111;border:1px solid rgba(255,255,255,0.15);border-radius:6px;display:flex;flex-direction:column;overflow:hidden;';
+
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.12);flex-shrink:0;';
+    const title = document.createElement('span');
+    title.textContent = 'PRIVACY POLICY';
+    title.style.cssText = 'font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:0.08em;';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = 'background:none;border:none;color:rgba(255,255,255,0.6);font-size:22px;line-height:1;cursor:pointer;padding:0 4px;';
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.style.cssText = 'overflow-y:auto;padding:24px 28px;-webkit-overflow-scrolling:touch;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:rgba(255,255,255,0.85);';
+
+    const policyLines = [
+      'Privacy Policy for RATeRACE',
+      'Effective Date: 15th May',
+      'Website: adultmoney.club',
+      'Contact Email: clubadultmoney@gmail.com',
+      'Operator: Adultmoney',
+      '',
+      'RATeRACE is an experimental web project that turns professional market pressure into a visible score. This Privacy Policy explains what information we collect, how we use it, how we store it, and what choices you have.',
+      '',
+      'By using RATeRACE, you agree to the collection and use of information as described in this Privacy Policy.',
+      '',
+      '1. What RATeRACE Does',
+      '',
+      'RATeRACE allows users to generate a professional market-signal card based on their career profile, skills, resume/CV information, and other professional inputs.',
+      '',
+      'The project generates two main outputs:',
+      'RATE — a score that reflects how strong your current professional signal appears in the market.',
+      'Replaceability Index — an experimental estimate of how exposed your current work profile may be to automation, skill saturation, role compression, and changing market demand.',
+      '',
+      'RATeRACE is built as an artistic, experimental, and informational product. It is not a hiring platform, credit bureau, financial service, employment agency, or professional certification system.',
+      '',
+      '2. Information We Collect',
+      '',
+      'When you use RATeRACE, we may collect the following information:',
+      'Name',
+      'Email address',
+      'Profile photo',
+      'Login or authentication information',
+      'LinkedIn profile information, depending on the permissions you approve',
+      'Resume/CV file, if you choose to upload it',
+      'Raw text extracted from your resume/CV',
+      'Work experience',
+      'Education',
+      'Skills',
+      'Projects',
+      'Roles',
+      'Achievements',
+      'Portfolio links or public profile links',
+      'Generated RATE score',
+      'Generated Replaceability Index',
+      'Card metadata',
+      'User status, ranking, or leaderboard-related information',
+      'Adultmoney code or login code, if used',
+      'Browser, device, IP address, and basic usage logs',
+      '',
+      'We collect only the information needed to operate RATeRACE, generate your card, store your card, improve the experience, and support future versions of the project.',
+      '',
+      '3. LinkedIn Login',
+      '',
+      'RATeRACE may allow users to sign in through LinkedIn.',
+      '',
+      'If you choose to sign in with LinkedIn, we may receive basic profile information such as your name, email address, profile photo, and other information depending on the permissions you approve during login.',
+      '',
+      'We do not control LinkedIn\'s own data practices. Your use of LinkedIn is also subject to LinkedIn\'s own privacy policy and terms.',
+      '',
+      '4. Resume/CV Processing and Storage',
+      '',
+      'If you upload a resume or CV, RATeRACE may process the file to extract text and professional information.',
+      '',
+      'This may include your work experience, education, skills, projects, roles, achievements, career history, and other career-related details.',
+      '',
+      'RATeRACE stores the raw extracted CV text and derived professional profile information.',
+      '',
+      'We use this information to:',
+      'generate your RATeRACE card;',
+      'calculate your RATE and Replaceability Index;',
+      'allow you to retrieve your existing card later;',
+      'prevent duplicate card generation for the same email;',
+      'improve the accuracy and reliability of the scoring system;',
+      'improve the overall RATeRACE experience;',
+      'support future versions of RATeRACE if the project becomes a more structured professional scoring or market-signal system.',
+      '',
+      'We do not publicly display your raw extracted CV text.',
+      'We do not sell your CV data to employers or recruiters.',
+      'We do not use your CV data to make hiring decisions.',
+      'We do not share your individual CV data with third parties for unrelated advertising or recruitment purposes.',
+      '',
+      '5. One Card Per Email',
+      '',
+      'RATeRACE may create and store one card per email address.',
+      '',
+      'This allows users to log in later and retrieve the same card instead of generating a new one every time.',
+      '',
+      'We may use your email address to identify your card, prevent duplicate generation, maintain your card history, and support account recovery.',
+      '',
+      '6. How We Use Your Information',
+      '',
+      'We may use your information to:',
+      'create your RATeRACE card;',
+      'calculate your RATE;',
+      'calculate your Replaceability Index;',
+      'generate explanations or insights related to your score;',
+      'compare your profile with market signals;',
+      'store and retrieve your card;',
+      'prevent duplicate or abusive use;',
+      'improve product performance;',
+      'improve score accuracy;',
+      'debug errors;',
+      'protect the website from spam, fraud, or misuse;',
+      'analyse how users interact with RATeRACE;',
+      'build future versions of the product;',
+      'maintain continuity if the project is transferred, acquired, merged, or reorganised.',
+      '',
+      'We may also use aggregated or de-identified data to understand broader patterns across roles, skills, industries, job categories, automation exposure, and market demand.',
+      '',
+      '7. How Scoring Works',
+      '',
+      'RATeRACE uses your submitted professional information and compares it against market-related signals.',
+      '',
+      'These may include:',
+      'role demand;',
+      'hiring trends;',
+      'skill relevance;',
+      'skill saturation;',
+      'automation exposure;',
+      'AI capability improvements;',
+      'industry momentum;',
+      'job-market indicators;',
+      'public or third-party labour-market data;',
+      'internal scoring logic developed by RATeRACE.',
+      '',
+      'The scoring system is experimental.',
+      '',
+      'Your RATE and Replaceability Index are not final judgments of your ability, value, intelligence, future, employability, or career potential.',
+      '',
+      'They are approximate product outputs designed to reflect market pressure and professional signal strength at a specific moment.',
+      '',
+      '8. Future Product Development',
+      '',
+      'RATeRACE may evolve over time.',
+      '',
+      'In the future, the project may become a more structured professional scoring, labour-market signal, or career-risk analysis system.',
+      '',
+      'Your data may be used to improve RATeRACE in that direction, but only within the broad purpose described in this Privacy Policy: generating, improving, and operating RATeRACE as a professional market-signal experience.',
+      '',
+      'RATeRACE is not currently a credit score, financial score, loan eligibility system, hiring eligibility system, or official employment assessment tool.',
+      '',
+      '9. AI Processing',
+      '',
+      'RATeRACE may use AI models or automated systems to analyse your submitted professional data and generate scores, insights, explanations, or profile interpretations.',
+      '',
+      'We may send relevant portions of your submitted data, extracted CV text, or profile information to AI service providers only as needed to operate the product.',
+      '',
+      'Where possible, we aim to use AI providers and settings that do not use your personal data to train public models.',
+      '',
+      'However, third-party AI providers may have their own technical and legal terms. We will aim to work with providers that offer reasonable privacy, security, and data-handling protections.',
+      '',
+      '10. Public Sharing',
+      '',
+      'Your RATeRACE card is private by default unless you choose to share, download, post, or publish it.',
+      '',
+      'If you publicly share your card, anyone who sees it may be able to view the information shown on the card, including your name, photo, score, rank, status, or other visible details.',
+      '',
+      'You are responsible for what you choose to share publicly.',
+      '',
+      '11. Leaderboards and Rankings',
+      '',
+      'RATeRACE may include leaderboard or ranking features.',
+      '',
+      'If you participate in leaderboard features, some information from your card may be displayed publicly or semi-publicly, such as:',
+      'display name;',
+      'photo or avatar;',
+      'RATE;',
+      'Replaceability Index;',
+      'rank;',
+      'employment status category;',
+      'role category;',
+      'score category;',
+      'other card-based public signals.',
+      '',
+      'We will not publicly display your raw extracted CV text.',
+      '',
+      '12. Cookies, Logs, and Analytics',
+      '',
+      'RATeRACE may collect basic technical information when you use the website.',
+      '',
+      'This may include:',
+      'browser type;',
+      'device type;',
+      'operating system;',
+      'IP address;',
+      'pages visited;',
+      'time spent on the website;',
+      'click activity;',
+      'error logs;',
+      'referral source.',
+      '',
+      'We use this information to improve the website, monitor performance, understand usage, detect abuse, and fix technical issues.',
+      '',
+      'We may use cookies or similar technologies to keep users logged in, remember preferences, prevent abuse, and analyse product usage.',
+      '',
+      '13. Third-Party Services',
+      '',
+      'RATeRACE may use third-party services for:',
+      'authentication;',
+      'LinkedIn login;',
+      'hosting;',
+      'database storage;',
+      'AI processing;',
+      'analytics;',
+      'security;',
+      'email delivery;',
+      'payment or future account features;',
+      'file processing;',
+      'performance monitoring.',
+      '',
+      'These third parties may process your data only as needed to provide their services to RATeRACE.',
+      '',
+      'We do not allow third-party service providers to use your personal data for unrelated purposes.',
+      '',
+      '14. Data Sharing',
+      '',
+      'We may share your information only in the following situations:',
+      'with service providers who help operate RATeRACE;',
+      'when required by law, regulation, legal process, or government request;',
+      'to protect RATeRACE, users, or the public from fraud, abuse, security threats, or illegal activity;',
+      'during a merger, acquisition, investment, sale, restructuring, or transfer of the project;',
+      'with your consent;',
+      'in aggregated or de-identified form where individuals are not directly identified.',
+      '',
+      'We do not sell your personal CV data to employers, recruiters, advertisers, or data brokers.',
+      '',
+      '15. Business Transfer',
+      '',
+      'If RATeRACE, Adultmoney, or the project\'s assets are acquired, merged, sold, transferred, invested in, reorganised, or otherwise moved to a new owner or operator, user data may be transferred as part of that transaction.',
+      '',
+      'This may include account data, email addresses, generated cards, scores, extracted CV text, usage data, and related product data.',
+      '',
+      'Any new owner or operator will be expected to respect the commitments made in this Privacy Policy unless users are notified of material changes and given choices required by applicable law.',
+      '',
+      'We will not allow a new owner to use previously collected personal data for completely unrelated purposes without appropriate notice, consent, or legal basis.',
+      '',
+      '16. Data Retention',
+      '',
+      'We may retain your personal data for as long as needed to:',
+      'operate RATeRACE;',
+      'maintain your card;',
+      'allow card retrieval;',
+      'prevent duplicate cards;',
+      'improve the scoring system;',
+      'support future product development;',
+      'comply with legal obligations;',
+      'resolve disputes;',
+      'prevent fraud or abuse;',
+      'maintain security.',
+      '',
+      'This may include retaining your raw extracted CV text, generated scores, card metadata, and account information.',
+      '',
+      'You may request deletion of your personal data by contacting us at clubadultmoney@gmail.com.',
+      '',
+      'If you request deletion, we will delete or anonymise your personal data unless we are required to retain it for legal, security, fraud-prevention, or legitimate operational reasons.',
+      '',
+      '17. Data Security',
+      '',
+      'We use reasonable technical and organisational measures to protect your data from unauthorised access, misuse, loss, disclosure, alteration, or destruction.',
+      '',
+      'These measures may include:',
+      'encrypted storage where appropriate;',
+      'restricted database access;',
+      'authentication controls;',
+      'access logging;',
+      'secure hosting;',
+      'rate limits;',
+      'abuse monitoring;',
+      'internal access controls.',
+      '',
+      'However, no website, database, or internet transmission is completely secure.',
+      '',
+      'You use RATeRACE with the understanding that some risk always exists online.',
+      '',
+      '18. International Data Transfers',
+      '',
+      'Some of the services used by RATeRACE may store or process data in countries outside your own.',
+      '',
+      'By using RATeRACE, you understand that your information may be processed in locations where our service providers operate.',
+      '',
+      'Where required, we will take reasonable steps to ensure that such transfers are handled with appropriate safeguards.',
+      '',
+      '19. Your Rights',
+      '',
+      'Depending on your location and applicable law, you may have the right to:',
+      'access the personal data we hold about you;',
+      'request correction of inaccurate data;',
+      'request deletion of your personal data;',
+      'withdraw consent where processing is based on consent;',
+      'ask how your data is being used;',
+      'request that we stop certain types of processing;',
+      'raise a grievance or complaint.',
+      '',
+      'To exercise these rights, contact us at: clubadultmoney@gmail.com',
+      '',
+      'We may need to verify your identity before responding to certain requests.',
+      '',
+      '20. Children\'s Privacy',
+      '',
+      'RATeRACE is not intended for children under the age of 18.',
+      '',
+      'We do not knowingly collect personal data from children.',
+      '',
+      'If we learn that we have collected personal data from a child without appropriate consent, we will take steps to delete it.',
+      '',
+      '21. No Employment, Financial, or Legal Advice',
+      '',
+      'RATeRACE scores are experimental and informational.',
+      '',
+      'They do not constitute:',
+      'employment advice;',
+      'financial advice;',
+      'legal advice;',
+      'career counselling;',
+      'credit scoring;',
+      'loan eligibility assessment;',
+      'hiring eligibility assessment;',
+      'professional certification.',
+      '',
+      'Do not rely on RATeRACE scores as the sole basis for major career, financial, employment, or legal decisions.',
+      '',
+      '22. Changes to This Privacy Policy',
+      '',
+      'We may update this Privacy Policy as RATeRACE evolves.',
+      '',
+      'If we make material changes, we may notify users through the website, email, or another reasonable method.',
+      '',
+      'The updated Privacy Policy will show a new effective date.',
+      '',
+      'Continued use of RATeRACE after changes means you accept the updated Privacy Policy.',
+      '',
+      '23. Contact',
+      '',
+      'For privacy questions, data deletion requests, access requests, or complaints, contact:',
+      'RATeRACE / Adultmoney',
+      'Email: clubadultmoney@gmail.com',
+      'Website: adultmoney.club',
+    ];
+
+    // Render lines: section headings (start with a digit followed by ". ") get bolder styling
+    const sectionHeadingRe = /^\d+\.\s/;
+    policyLines.forEach(line => {
+      if (line === '') {
+        body.appendChild(document.createElement('br'));
+      } else if (sectionHeadingRe.test(line)) {
+        const el = document.createElement('p');
+        el.textContent = line;
+        el.style.cssText = 'font-weight:700;color:#fff;margin:12px 0 4px;';
+        body.appendChild(el);
+      } else {
+        const el = document.createElement('p');
+        el.textContent = line;
+        el.style.cssText = 'margin:2px 0;';
+        body.appendChild(el);
+      }
+    });
+
+    panel.appendChild(header);
+    panel.appendChild(body);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+
+    function closeOverlay() { overlay.remove(); }
+    closeBtn.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+  }
+
   function createLeadModalDOM() {
     injectLeadModalStyles();
 
@@ -2538,6 +2940,25 @@
             <button class="rr-loading-back rr-hidden" type="button">← Try again</button>
           </div>
 
+          <!-- PRIVACY GATE -->
+          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden">
+            <p style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:20px;">
+              Before continuing, please review our Privacy Policy. By creating your card, you agree that we may collect and process your profile data as described.
+            </p>
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:24px;">
+              <input type="checkbox" id="rrPrivacyCheck" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#e60000;">
+              <span style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.5;">
+                I have read and agree to the <a id="rrPrivacyLink" href="#" style="color:#e60000;text-decoration:underline;font-family:Arial,sans-serif;">Privacy Policy</a>
+              </span>
+            </label>
+            <button id="rrPrivacyContinue" disabled style="width:100%;padding:14px;background:#e60000;color:#fff;border:none;font-family:'Pixelify Sans',monospace;font-size:15px;letter-spacing:0.08em;cursor:not-allowed;opacity:0.5;transition:opacity 200ms,cursor 200ms;">
+              CONTINUE WITH LINKEDIN
+            </button>
+            <button id="rrPrivacyBack" style="display:block;width:100%;margin-top:10px;padding:10px;background:transparent;border:none;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;font-size:13px;cursor:pointer;text-align:center;">
+              ← Back
+            </button>
+          </div>
+
           <div class="rr-lead-content rr-mode rr-mode-card rr-hidden">
             <div class="rr-card-image-wrap" style="display:none"><img class="rr-card-image" src="" alt="" /></div>
             <div class="rr-card-ready-label">YOUR CARD IS READY</div>
@@ -2610,13 +3031,49 @@
     overlay.querySelectorAll('[data-entry]').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.dataset.entry === 'new') {
-          window.va?.('event', { name: 'linkedin_oauth_start', data: { intent: 'new' } });
-          window.location.href = `${BACKEND_URL}/api/auth/linkedin?intent=new`;
+          if (leadModal.privacyAccepted) {
+            window.va?.('event', { name: 'linkedin_oauth_start', data: { intent: 'new' } });
+            window.location.href = `${BACKEND_URL}/api/auth/linkedin?intent=new`;
+          } else {
+            setLeadModalMode('privacy-gate');
+          }
         } else {
           setLeadModalMode('existing-login');
         }
       });
     });
+
+    // Privacy gate wiring
+    const privacyCheck    = overlay.querySelector('#rrPrivacyCheck');
+    const privacyContinue = overlay.querySelector('#rrPrivacyContinue');
+    const privacyBack     = overlay.querySelector('#rrPrivacyBack');
+    const privacyLink     = overlay.querySelector('#rrPrivacyLink');
+
+    privacyCheck.addEventListener('change', () => {
+      if (privacyCheck.checked) {
+        privacyContinue.disabled = false;
+        privacyContinue.style.opacity = '1';
+        privacyContinue.style.cursor  = 'pointer';
+      } else {
+        privacyContinue.disabled = true;
+        privacyContinue.style.opacity = '0.5';
+        privacyContinue.style.cursor  = 'not-allowed';
+      }
+    });
+
+    privacyLink.addEventListener('click', e => {
+      e.preventDefault();
+      openPrivacyPolicyOverlay();
+    });
+
+    privacyContinue.addEventListener('click', () => {
+      if (!privacyCheck.checked) return;
+      sessionStorage.setItem('rrPrivacyPending', '1');
+      window.va?.('event', { name: 'linkedin_oauth_start', data: { intent: 'new' } });
+      window.location.href = `${BACKEND_URL}/api/auth/linkedin?intent=new`;
+    });
+
+    privacyBack.addEventListener('click', () => setLeadModalMode('entry'));
 
     // Existing login
     overlay.querySelector('.rr-el-li-btn').addEventListener('click', () => {
@@ -2694,7 +3151,7 @@
     leadModal.el.querySelector(`.rr-mode-${mode}`).classList.remove('rr-hidden');
 
     const footer = leadModal.el.querySelector('.rr-lead-footer');
-    const hideFooterModes = ['loading', 'card', 'entry', 'existing-login', 'confirm', 'upload-cv'];
+    const hideFooterModes = ['loading', 'card', 'entry', 'existing-login', 'confirm', 'upload-cv', 'privacy-gate'];
     if (footer) footer.style.display = hideFooterModes.includes(mode) ? 'none' : '';
 
     if (mode === 'confirm') {

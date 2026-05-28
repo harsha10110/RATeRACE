@@ -8,5 +8,6 @@ const router = Router();
 
 router.post('/bio',   auth, portrait.single('portrait'), ctrl.updateBio);
 router.patch('/photo', auth, ctrl.updatePhoto);
+router.post('/privacy', auth, ctrl.acceptPrivacy);
 
 module.exports = router;

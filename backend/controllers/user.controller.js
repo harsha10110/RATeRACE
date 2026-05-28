@@ -70,4 +70,11 @@ async function updatePhoto(req, res, next) {
   }
 }
 
-module.exports = { updateBio, updatePhoto };
+async function acceptPrivacy(req, res, next) {
+  try {
+    await User.findByIdAndUpdate(req.user.userId, { privacyAcceptedAt: new Date() });
+    res.json({ ok: true });
+  } catch (err) { next(err); }
+}
+
+module.exports = { updateBio, updatePhoto, acceptPrivacy };
