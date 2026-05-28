@@ -4,9 +4,13 @@ require('dotenv').config();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
 const required = [
-  ['MONGODB_URI', 'MongoDB Atlas connection string'],
-  ['JWT_SECRET',  'Secret for signing JWTs'],
-  ['ADMIN_SECRET','Secret password for the /admin panel'],
+  ['MONGODB_URI',           'MongoDB Atlas connection string'],
+  ['JWT_SECRET',            'Secret for signing JWTs'],
+  ['ADMIN_SECRET',          'Secret password for the /admin panel'],
+  ['GEMINI_API_KEY',        'Gemini API key for LLM scoring'],
+  ['CLOUDINARY_CLOUD_NAME', 'Cloudinary cloud name for image uploads'],
+  ['CLOUDINARY_API_KEY',    'Cloudinary API key'],
+  ['CLOUDINARY_API_SECRET', 'Cloudinary API secret'],
 ];
 
 for (const [key, desc] of required) {

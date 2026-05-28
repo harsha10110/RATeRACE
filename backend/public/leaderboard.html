@@ -427,7 +427,8 @@
     const URL_TOKEN = params.get('token')      || '';
     const URL_AM    = (params.get('amCode')    || '').trim().toUpperCase();
     const URL_HL    = (params.get('highlighted')|| '').trim().toUpperCase();
-    const FROM_URL  = params.get('from')       || '';
+    const _fromRaw  = params.get('from') || '';
+    const FROM_URL  = (() => { try { const u = new URL(_fromRaw); return u.origin === window.location.origin ? _fromRaw : ''; } catch { return ''; } })();
     const TOP_LIMIT = 50;
 
     // Normalise amCode for comparison (remove spaces)

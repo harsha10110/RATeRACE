@@ -2373,9 +2373,8 @@
 
   async function handleShare() {
     const slug    = leadModal.amCode;
-    const backendOrigin = window.location.origin.replace(':8000', ':3000');
     const cardUrl = slug
-      ? `${backendOrigin}/card/${slug}`
+      ? `${window.location.origin}/card/${slug}`
       : leadModal.imageUrl || window.location.href;
     try {
       await navigator.clipboard.writeText(cardUrl);

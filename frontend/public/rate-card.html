@@ -389,12 +389,12 @@
 
   <script>
     const CHESS_PIECE_MAP = {
-      king:   "https://ik.imagekit.io/2pg1fp1lr/assets/chess/king.png",
-      queen:  "https://ik.imagekit.io/2pg1fp1lr/assets/chess/queen.png",
-      rook:   "https://ik.imagekit.io/2pg1fp1lr/assets/chess/rook.png",
-      bishop: "https://ik.imagekit.io/2pg1fp1lr/assets/chess/bishop.png",
-      knight: "https://ik.imagekit.io/2pg1fp1lr/assets/chess/knight.png",
-      pawn:   "https://ik.imagekit.io/2pg1fp1lr/assets/chess/pawn.png"
+      king:   "../assets/chess/king.png",
+      queen:  "../assets/chess/queen.png",
+      rook:   "../assets/chess/rook.png",
+      bishop: "../assets/chess/bishop.png",
+      knight: "../assets/chess/knight.png",
+      pawn:   "../assets/chess/pawn.png"
     };
 
     const fallbackCardData = {
@@ -481,7 +481,7 @@
 
     function renderHourglass(cfg) {
       const frame = Math.min(10, Math.max(1, cfg?.frame ?? 1));
-      hourglassImg.src = `https://ik.imagekit.io/2pg1fp1lr/assets/hourglass/hourglass-${frame}.png`;
+      hourglassImg.src = `../assets/hourglass/hourglass-${frame}.png`;
     }
 
     function renderCard(data) {
