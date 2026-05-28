@@ -42,7 +42,7 @@ function geminiError(message, status = 0) {
 }
 
 // ── Module under test ─────────────────────────────────────────────────────────
-const { complete, classifyGeminiError, _resetState } = require('../services/llm');
+const { complete, classifyGeminiError, classifyGroqError, _resetState } = require('../services/llm');
 
 // ── Test suite ────────────────────────────────────────────────────────────────
 beforeEach(() => {
@@ -221,5 +221,52 @@ describe('complete() — Gemini primary, Groq fallback', () => {
     });
 
     expect(mockChatCreate).not.toHaveBeenCalled();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('classifyGroqError', () => {
+  test('429 → rate_limited', () => {
+    const err = Object.assign(new Error('rate_limit_exceeded'), { status: 429 });
+    expect(classifyGroqError(err)).toBe('rate_limited');
+  });
+
+  test('429 with rate limit message only → rate_limited', () => {
+    const err = new Error('rate limit exceeded for model');
+    expect(classifyGroqError(err)).toBe('rate_limited');
+  });
+
+  test('503 → transient', () => {
+    const err = Object.assign(new Error('Service Unavailable'), { status: 503 });
+    expect(classifyGroqError(err)).toBe('transient');
+  });
+
+  test('400 → null', () => {
+    const err = Object.assign(new Error('Bad Request: invalid model'), { status: 400 });
+    expect(classifyGroqError(err)).toBeNull();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('complete() — Gemini daily-blocked + Groq rate-limited', () => {
+  test('9. Gemini daily-blocked AND Groq rate-limited → throws 503 without calling Gemini again', async () => {
+    // First call: Gemini hits daily quota → blocks Gemini, routes to Groq
+    mockGenerateContent.mockRejectedValueOnce(
+      geminiError('[429 Too Many Requests] Quota exceeded for quota metric requests_per_day', 429)
+    );
+    // Groq also rate-limited
+    mockChatCreate.mockRejectedValueOnce(
+      Object.assign(new Error('rate_limit_exceeded'), { status: 429 })
+    );
+
+    await expect(complete('sys', 'user', { json: true })).rejects.toMatchObject({
+      message: expect.stringContaining('Both AI providers are currently unavailable'),
+      status: 503,
+    });
+
+    // Gemini should have been called only once (the initial failed attempt)
+    // The final Gemini retry must be skipped because Gemini is daily-blocked
+    expect(mockGenerateContent).toHaveBeenCalledTimes(1);
+    expect(mockChatCreate).toHaveBeenCalledTimes(1);
   });
 });

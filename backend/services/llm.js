@@ -56,6 +56,28 @@ function classifyGeminiError(err) {
   return null;
 }
 
+/**
+ * Classify a Groq error (OpenAI-compatible error shape).
+ * Returns:
+ *   'rate_limited' — 429, rate limit hit (transient, don't retry immediately)
+ *   'transient'    — 5xx or timeout
+ *   null           — other error
+ */
+function classifyGroqError(err) {
+  const msg    = (err.message || '').toLowerCase();
+  const status = err.status || err.statusCode || 0;
+
+  if (status === 429 || msg.includes('rate limit') || msg.includes('rate_limit_exceeded')) {
+    return 'rate_limited';
+  }
+
+  if (status >= 500 || msg.includes('timeout') || msg.includes('etimedout') || msg.includes('econnreset')) {
+    return 'transient';
+  }
+
+  return null;
+}
+
 // ── Lazy-init clients ─────────────────────────────────────────────────────────
 let _geminiAI    = null;
 let _groqClient  = null;
@@ -190,13 +212,38 @@ async function complete(systemPrompt, userPrompt, { json = false, model = DEFAUL
       const result = await completeGroq(systemPrompt, userPrompt, { json, model: groqModel });
       return finalise(result, 'groq', groqModel, userId, callType, t0);
     } catch (groqErr) {
-      logger.warn(
-        { error: groqErr.message, status: groqErr.status ?? groqErr.statusCode ?? null, type: groqErr.constructor?.name },
-        'Groq fallback failed — retrying Gemini once'
-      );
+      const groqErrType = classifyGroqError(groqErr);
+      if (groqErrType === 'rate_limited') {
+        logger.warn(
+          { error: groqErr.message, status: groqErr.status ?? groqErr.statusCode ?? null },
+          'Groq rate-limited'
+        );
+      } else if (groqErrType === 'transient') {
+        logger.warn(
+          { error: groqErr.message, status: groqErr.status ?? groqErr.statusCode ?? null },
+          'Groq transient error'
+        );
+      } else {
+        logger.warn(
+          { error: groqErr.message, status: groqErr.status ?? groqErr.statusCode ?? null, type: groqErr.constructor?.name },
+          'Groq error'
+        );
+      }
+
+      // Skip the Gemini retry if Gemini is daily-blocked — it will fail immediately anyway
+      if (isGeminiBlocked()) {
+        logger.error(
+          { blockedUntil: new Date(geminiBlockedUntil).toISOString() },
+          'Gemini daily-blocked and Groq failed — all providers exhausted'
+        );
+        throw Object.assign(
+          new Error('Both AI providers are currently unavailable. Please try again in a few minutes.'),
+          { status: 503 }
+        );
+      }
     }
 
-    // ── Final Gemini retry ────────────────────────────────────────────────
+    // ── Final Gemini retry (only reached when Gemini is NOT daily-blocked) ────
     try {
       const result = await completeGemini(systemPrompt, userPrompt, { json, model });
       return finalise(result, 'gemini', model, userId, callType, t0);
@@ -220,4 +267,4 @@ function _resetState() {
   geminiBlockedUntil = 0;
 }
 
-module.exports = { complete, PROVIDER, DEFAULT_MODEL, classifyGeminiError, _resetState };
+module.exports = { complete, PROVIDER, DEFAULT_MODEL, classifyGeminiError, classifyGroqError, _resetState };
