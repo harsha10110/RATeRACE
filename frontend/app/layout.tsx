@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { IMAGEKIT_URL, SCATTER_PRIORITY, SCATTER_TR } from '@/lib/config';
 import './globals.css';
 
@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.png',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 // Priority images from scatter-gallery.js — preload these before any JS runs.

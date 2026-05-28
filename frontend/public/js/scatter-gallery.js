@@ -1357,9 +1357,11 @@
       .rr-final-card-img {
         position: absolute; inset: 0; width: 100%; height: 100%;
         object-fit: cover; border-radius: inherit; display: none; z-index: 2;
+        opacity: 0; transition: opacity 300ms ease;
       }
       .rr-card-wrap.has-card-image .rr-final-card-img { display: block; }
-      .rr-card-wrap.has-card-image .rr-generated-card-fallback { display: none; }
+      .rr-card-wrap.has-card-image.card-image-loaded .rr-final-card-img { opacity: 1; }
+      .rr-card-wrap.has-card-image.card-image-loaded .rr-generated-card-fallback { display: none; }
       .rr-generated-card-fallback {
         position: absolute; inset: 0; overflow: hidden; border-radius: inherit;
         background: #f4f1e8; color: #0b0b0b; z-index: 1; padding: 22px;
@@ -1958,7 +1960,12 @@
         if (card.imageUrl) {
           const img  = overlay.querySelector('#rrFinalCardImage');
           const wrap = overlay.querySelector('#rrCardWrap');
-          if (img && wrap) { img.src = card.imageUrl; wrap.classList.add('has-card-image'); }
+          if (img && wrap) {
+            const preload = new Image();
+            preload.onload = () => { img.src = card.imageUrl; wrap.classList.add('has-card-image'); requestAnimationFrame(() => wrap.classList.add('card-image-loaded')); };
+            preload.onerror = () => { img.src = card.imageUrl; wrap.classList.add('has-card-image'); wrap.classList.add('card-image-loaded'); };
+            preload.src = card.imageUrl;
+          }
         }
 
         // Dynamic org tooltips
@@ -2172,8 +2179,14 @@
             leadModal.imageUrl = genData.imageUrl;
             const img  = overlay.querySelector('#rrFinalCardImage');
             const wrap = overlay.querySelector('#rrCardWrap');
-            if (img)  img.src = genData.imageUrl + '?t=' + Date.now();
-            if (wrap) wrap.classList.add('has-card-image');
+            if (img && wrap) {
+              const newUrl = genData.imageUrl + '?t=' + Date.now();
+              wrap.classList.remove('card-image-loaded');
+              const preload = new Image();
+              preload.onload = () => { img.src = newUrl; wrap.classList.add('has-card-image'); requestAnimationFrame(() => wrap.classList.add('card-image-loaded')); };
+              preload.onerror = () => { img.src = newUrl; wrap.classList.add('has-card-image'); wrap.classList.add('card-image-loaded'); };
+              preload.src = newUrl;
+            }
           }
           // amCode changes on every generate — keep leadModal in sync
           if (genData.amCode) {
@@ -2305,8 +2318,14 @@
             leadModal.imageUrl = genData.imageUrl;
             const img  = overlay.querySelector('#rrFinalCardImage');
             const wrap = overlay.querySelector('#rrCardWrap');
-            if (img)  img.src = genData.imageUrl + '?t=' + Date.now();
-            if (wrap) wrap.classList.add('has-card-image');
+            if (img && wrap) {
+              const newUrl = genData.imageUrl + '?t=' + Date.now();
+              wrap.classList.remove('card-image-loaded');
+              const preload = new Image();
+              preload.onload = () => { img.src = newUrl; wrap.classList.add('has-card-image'); requestAnimationFrame(() => wrap.classList.add('card-image-loaded')); };
+              preload.onerror = () => { img.src = newUrl; wrap.classList.add('has-card-image'); wrap.classList.add('card-image-loaded'); };
+              preload.src = newUrl;
+            }
           }
           if (genData.amCode) {
             leadModal.amCode = genData.amCode;
@@ -4387,7 +4406,22 @@
 
   window.addEventListener('resize', resize);
 
+  // On mobile browsers the visual viewport can shift after the initial paint
+  // (e.g. when the address bar animates away after an OAuth redirect). Hook
+  // visualViewport.resize so the canvas is re-sized whenever the actual visible
+  // area changes, not just when the window reports a resize event.
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', resize);
+  }
+
   resize();
+
+  // Mobile browsers (especially iOS Safari / Android Chrome) may report stale
+  // layout dimensions on the very first paint after a fresh page load — which
+  // is exactly what happens on the OAuth redirect return path.  A short deferred
+  // resize corrects the canvas before the user has a chance to interact.
+  setTimeout(resize, 150);
+
   loadRateCardCarousel();
   preloadManifest();
   createLeadModalDOM();
