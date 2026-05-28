@@ -131,7 +131,7 @@ npm run test:watch    # watch mode
 | `MONGODB_URI` | **yes** | Atlas connection string |
 | `JWT_SECRET` | **yes** | Long random string (signs 30-day user JWTs) |
 | `ADMIN_SECRET` | **yes** | Password for `/admin` (signs 8-hour admin JWTs) |
-| `GEMINI_API_KEY` | **yes** | Use `gemini-3.1-flash-lite-preview`; free quota requires a project **without** billing |
+| `GEMINI_API_KEY` | **yes** | Use `gemini-3.5-flash` (set via `LLM_MODEL`); free quota requires a project **without** billing |
 | `CLOUDINARY_CLOUD_NAME` | **yes** | |
 | `CLOUDINARY_API_KEY` | **yes** | |
 | `CLOUDINARY_API_SECRET` | **yes** | |

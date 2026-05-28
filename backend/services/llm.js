@@ -5,7 +5,7 @@ const ApiUsage = require('../models/ApiUsage');
 
 // ── Provider defaults ─────────────────────────────────────────────────────────
 const PROVIDER_DEFAULTS = {
-  gemini: 'gemini-3.1-flash-lite-preview',
+  gemini: 'gemini-3.5-flash',
   groq:   'llama-3.3-70b-versatile',
 };
 
