@@ -1599,7 +1599,7 @@
         .rr-final-modal { --rr-card-w: min(84vw, 290px); }
         .rr-final-header { gap: 8px; padding-top: 12px; }
         .rr-header-logo-img { height: 20px; }
-        .rr-top-pill, .rr-leader-pill { font-size: 12px; padding: 0.28em 0.5em 0.36em; }
+        .rr-top-pill, .rr-leader-pill { font-size: 12px; padding: 0.28em 0.5em 0.36em; min-height: 35px; }
         .rr-final-layout { width: 96vw; padding-top: 10px; padding-bottom: 60px; }
         .rr-section-title { font-size: 28px; margin-bottom: 18px; }
         .rr-meter-svg { width: 200px; height: 112px; }
@@ -1759,7 +1759,7 @@
               </div>
             </div>
             <div class="rr-manifesto-am-footer">
-              <img src="/adultmoney-header-logo.png" width="28" height="28" alt="AdultMoney">
+              <img src="/adultmoneylogo.png" width="28" height="28" alt="AdultMoney">
             </div>
           </div>
           <div class="rr-manifesto-body">
