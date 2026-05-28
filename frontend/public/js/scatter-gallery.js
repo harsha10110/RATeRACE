@@ -1179,6 +1179,7 @@
 
       if (leadModal.cardCodeEl) leadModal.cardCodeEl.textContent = cardData.amCode || '';
       saveAuthToStorage();
+      window.va?.('event', { name: 'card_generated' });
       setDownloadShareVisible(true);
       setLeadModalMode('card');
     } catch (err) {
@@ -1943,8 +1944,12 @@
     window.addEventListener('keydown', _modalEscHandler);
 
     // Header pill clicks
-    overlay.querySelector('.rr-top-pill')?.addEventListener('click', openManifestoModal);
+    overlay.querySelector('.rr-top-pill')?.addEventListener('click', () => {
+      window.va?.('event', { name: 'manifesto_opened' });
+      openManifestoModal();
+    });
     overlay.querySelector('.rr-leader-pill')?.addEventListener('click', () => {
+      window.va?.('event', { name: 'leaderboard_opened', data: { from: 'card_modal' } });
       const returnUrl = window.location.origin + window.location.pathname + '?openModal=card';
       const params = new URLSearchParams({ from: returnUrl });
       window.location.href = window.location.origin + '/leaderboard?' + params.toString();
@@ -2405,6 +2410,7 @@
       document.execCommand('copy');
       inp.remove();
     }
+    window.va?.('event', { name: 'card_shared' });
     showToast('Link copied');
   }
 
@@ -2604,6 +2610,7 @@
     overlay.querySelectorAll('[data-entry]').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.dataset.entry === 'new') {
+          window.va?.('event', { name: 'linkedin_oauth_start', data: { intent: 'new' } });
           window.location.href = `${BACKEND_URL}/api/auth/linkedin?intent=new`;
         } else {
           setLeadModalMode('existing-login');
@@ -2613,6 +2620,7 @@
 
     // Existing login
     overlay.querySelector('.rr-el-li-btn').addEventListener('click', () => {
+      window.va?.('event', { name: 'linkedin_oauth_start', data: { intent: 'existing' } });
       window.location.href = `${BACKEND_URL}/api/auth/linkedin?intent=existing`;
     });
     overlay.querySelector('.rr-el-to-entry').addEventListener('click', () => setLeadModalMode('entry'));
