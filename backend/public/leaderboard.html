@@ -300,6 +300,22 @@
       /* Shell fills width */
       .rr-shell { width:96vw; }
     }
+    .rr-contact-link {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-decoration: underline;
+      color: #e60000;
+      white-space: nowrap;
+    }
+    #rr-contact-footer {
+      display: none;
+      text-align: center;
+      padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
+    }
+    @media (max-width: 480px) {
+      .rr-header-contact { display: none; }
+      #rr-contact-footer { display: block; }
+    }
   </style>
 </head>
 <body>
@@ -313,6 +329,7 @@
         <img class="rr-logo2" src="/rateracelogo.png" alt="RATe RACE"
              onerror="this.style.display='none'">
       </div>
+      <a class="rr-contact-link rr-header-contact" href="mailto:clubadultmoney@gmail.com">clubadultmoney@gmail.com</a>
     </header>
 
     <div class="rr-clock" id="rrClock">00:00:00</div>
@@ -421,6 +438,8 @@
       </div>
     </div>
   </main>
+
+  <footer id="rr-contact-footer"><a class="rr-contact-link" href="mailto:clubadultmoney@gmail.com">clubadultmoney@gmail.com</a></footer>
 
   <script>
     const params    = new URLSearchParams(window.location.search);

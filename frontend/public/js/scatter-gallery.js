@@ -3172,7 +3172,7 @@
     ctx.save();
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `400 70px "Anonymous Pro", monospace`;
+    ctx.font = `400 ${window.innerWidth < 768 ? 91 : 70}px "Anonymous Pro", monospace`;
     ctx.fillStyle = '#ff0000ff';
     ctx.fillText(redText, local.cx, local.redY);
     ctx.restore();
@@ -4429,6 +4429,45 @@
   // is exactly what happens on the OAuth redirect return path.  A short deferred
   // resize corrects the canvas before the user has a chance to interact.
   setTimeout(resize, 150);
+
+  // Inject contact email link as a fixed DOM element (desktop: top-right; mobile: bottom footer)
+  (function injectContactEmail() {
+    const styleEl = document.createElement('style');
+    styleEl.textContent = [
+      '#rr-contact-wrap {',
+      '  position: fixed;',
+      '  z-index: 9000;',
+      '  pointer-events: none;',
+      '}',
+      '#rr-contact-wrap a {',
+      '  pointer-events: all;',
+      '  font-family: Arial, sans-serif;',
+      '  font-size: 14px;',
+      '  text-decoration: underline;',
+      '  color: #e60000;',
+      '}',
+      '@media (min-width: 481px) {',
+      '  #rr-contact-wrap { top: 18px; right: 24px; bottom: auto; left: auto; }',
+      '}',
+      '@media (max-width: 480px) {',
+      '  #rr-contact-wrap {',
+      '    bottom: calc(16px + env(safe-area-inset-bottom));',
+      '    left: 0; right: 0;',
+      '    text-align: center;',
+      '    top: auto;',
+      '  }',
+      '}',
+    ].join('\n');
+    document.head.appendChild(styleEl);
+
+    const wrap = document.createElement('div');
+    wrap.id = 'rr-contact-wrap';
+    const link = document.createElement('a');
+    link.href = 'mailto:clubadultmoney@gmail.com';
+    link.textContent = 'clubadultmoney@gmail.com';
+    wrap.appendChild(link);
+    document.body.appendChild(wrap);
+  })();
 
   loadRateCardCarousel();
   preloadManifest();

@@ -370,6 +370,22 @@
       .rr-header-logo-img { height: 20px; }
       .rr-section-title { font-size: 24px; }
     }
+    .rr-contact-link {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-decoration: underline;
+      color: #e60000;
+      white-space: nowrap;
+    }
+    #rr-contact-footer {
+      display: none;
+      text-align: center;
+      padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
+    }
+    @media (max-width: 480px) {
+      .rr-header-contact { display: none; }
+      #rr-contact-footer { display: block; }
+    }
     /* RateDisplay — numbers only */
     #rrRateScore, #rrReplaceabilityScore { font-family: "RateDisplay", monospace; }
     #rrPercentileText { font-family: "RateDisplay", monospace; }
@@ -433,6 +449,7 @@
     <div class="rr-top-pill" id="rrManifestoPill">MANIFESTO</div>
     <img class="rr-header-logo-img" id="rrHeaderLogo" alt="ADULTMONEY" />
     <div class="rr-leader-pill" id="rrLeaderPill">LEADERBOARD</div>
+    <a class="rr-contact-link rr-header-contact" href="mailto:clubadultmoney@gmail.com">clubadultmoney@gmail.com</a>
   </header>
 
   <section class="rr-final-layout">
@@ -575,6 +592,8 @@
       <span class="rr-back-coming">Coming soon</span>
     </div>
   </div>
+
+  <footer id="rr-contact-footer"><a class="rr-contact-link" href="mailto:clubadultmoney@gmail.com">clubadultmoney@gmail.com</a></footer>
 
   <script>
     (function () {
