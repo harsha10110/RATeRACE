@@ -84,32 +84,6 @@ async function me(req, res, next) {
   }
 }
 
-async function codeLogin(req, res, next) {
-  try {
-    const { email, code } = req.body;
-    if (!email || !code) {
-      return res.status(400).json({ error: { code: 'BAD_REQUEST', message: 'email and code are required' } });
-    }
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Invalid email or code' } });
-    }
-    const card = await Card.findOne({ userId: user._id });
-    if (!card?.amCode || card.amCode !== code.toUpperCase()) {
-      return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Invalid email or code' } });
-    }
-    res.json({
-      token:       signToken(user),
-      cardId:      card._id.toString(),
-      imageUrl:    card.imageUrl || null,
-      amCode:      card.amCode,
-      photoLocked: user.photoLocked || false,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
 // ── LinkedIn OAuth ────────────────────────────────────────────────────────────
 
 function linkedinAuth(req, res) {
@@ -238,4 +212,4 @@ async function linkedinExchange(req, res) {
   res.json(data);
 }
 
-module.exports = { signup, login, me, codeLogin, linkedinAuth, linkedinCallback, linkedinExchange };
+module.exports = { signup, login, me, linkedinAuth, linkedinCallback, linkedinExchange };

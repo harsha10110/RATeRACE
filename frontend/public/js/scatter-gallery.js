@@ -2003,14 +2003,8 @@
     // Header pill clicks
     overlay.querySelector('.rr-top-pill')?.addEventListener('click', openManifestoModal);
     overlay.querySelector('.rr-leader-pill')?.addEventListener('click', () => {
-      if (leadModal.token)    sessionStorage.setItem('rr_ret_token',    leadModal.token);
-      if (leadModal.amCode)   sessionStorage.setItem('rr_ret_amCode',   leadModal.amCode);
-      if (leadModal.cardId)   sessionStorage.setItem('rr_ret_cardId',   leadModal.cardId);
-      if (leadModal.imageUrl) sessionStorage.setItem('rr_ret_imageUrl', leadModal.imageUrl);
       const returnUrl = window.location.origin + window.location.pathname + '?openModal=card';
       const params = new URLSearchParams({ from: returnUrl });
-      if (leadModal.token)  params.set('token',  leadModal.token);
-      if (leadModal.amCode) params.set('amCode', leadModal.amCode);
       window.location.href = window.location.origin + '/leaderboard?' + params.toString();
     });
 
@@ -2967,18 +2961,7 @@
     }
     const lb = headerBtnHit.leaderboard;
     if (cx >= lb.x && cx <= lb.x + lb.w && cy >= lb.y && cy <= lb.y + lb.h) {
-      // Fallback: if hydration hasn't finished yet, read token directly from localStorage
-      let tok = leadModal.token;
-      let am  = leadModal.amCode;
-      if (!tok) {
-        try {
-          const stored = JSON.parse(localStorage.getItem('rr_auth') || 'null');
-          if (stored?.token) { tok = stored.token; am = am || stored.amCode; }
-        } catch (_) {}
-      }
       const params = new URLSearchParams({ from: window.location.href });
-      if (tok) params.set('token',  tok);
-      if (am)  params.set('amCode', am);
       window.location.href = window.location.origin + '/leaderboard?' + params.toString();
       return true;
     }
@@ -4510,33 +4493,8 @@
     }
   }
 
-  // If returning from leaderboard, reopen the card modal
-  function checkReturnFromLeaderboard() {
-    const urlP = new URLSearchParams(window.location.search);
-    if (urlP.get('openModal') !== 'card') return;
-    history.replaceState(null, '', window.location.pathname);
-
-    const tok = sessionStorage.getItem('rr_ret_token');
-    const am  = sessionStorage.getItem('rr_ret_amCode');
-    const cid = sessionStorage.getItem('rr_ret_cardId');
-    const img = sessionStorage.getItem('rr_ret_imageUrl');
-    ['rr_ret_token','rr_ret_amCode','rr_ret_cardId','rr_ret_imageUrl']
-      .forEach(k => sessionStorage.removeItem(k));
-
-    if (!tok || !am) return;
-
-    leadModal.token    = tok;
-    leadModal.amCode   = am;
-    leadModal.cardId   = cid || null;
-    leadModal.imageUrl = img || null;
-
-    openLeadModal('card');
-    openCardModal(am);
-  }
-
-  // Hydrate saved session first, then handle any OAuth callback or leaderboard return
+  // Hydrate saved session first, then handle any OAuth callback
   hydrateAuthFromStorage().then(() => {
     checkOAuthReturn();
-    checkReturnFromLeaderboard();
   });
 })();
