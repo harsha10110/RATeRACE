@@ -818,6 +818,14 @@
       .rr-lead-panel   { height: 440px; }
       .rr-lead-content { height: 440px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
+      /* ── PRIVACY GATE MODE ── */
+      .rr-mode-privacy-gate:not(.rr-hidden) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 4px;
+      }
+
       /* ── ENTRY MODE ── */
       .rr-mode-entry:not(.rr-hidden) {
         display: flex;
@@ -2999,7 +3007,7 @@
           </div>
 
           <!-- PRIVACY GATE -->
-          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden" style="padding:0 4px;display:flex;flex-direction:column;justify-content:center;">
+          <div class="rr-lead-content rr-mode rr-mode-privacy-gate rr-hidden">
             <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:20px;">
               Before continuing, please review our Privacy Policy. By creating your card, you agree that we may collect and process your profile data as described.
             </p>
