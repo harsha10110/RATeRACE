@@ -882,29 +882,6 @@
         -webkit-tap-highlight-color: transparent;
       }
       .rr-el-li-btn:hover { background: #0958a8; }
-      .rr-el-or {
-        position: absolute; top: 114px; left: 0;
-        width: 245px; text-align: center;
-        font-size: 8px; color: #444; letter-spacing: .1em;
-      }
-      .rr-el-email-label { position: absolute; top: 144px; left: 0; }
-      .rr-el-email { position: absolute; top: 162px; left: 0; width: 245px; }
-      .rr-el-code-label  { position: absolute; top: 206px; left: 0; }
-      .rr-el-code  { position: absolute; top: 224px; left: 0; width: 245px; }
-      .rr-el-submit {
-        position: absolute; top: 274px; left: 0;
-        width: 245px; height: 32px; min-height: 44px;
-        background: #fff; border: 0; color: #000;
-        font-family: "Pixelify Sans", monospace;
-        font-size: 10px; letter-spacing: .14em; cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .rr-el-submit:hover { background: #b90000; color: #fff; }
-      .rr-el-error {
-        position: absolute; top: 318px; left: 0;
-        width: 245px; text-align: center;
-        font-size: 8px; color: #c40000; min-height: 12px;
-      }
       .rr-el-back {
         position: absolute; top: 370px; left: 0;
         width: 245px; text-align: center;
@@ -1207,43 +1184,6 @@
     } catch (err) {
       setLoadingStatus('Error: ' + err.message);
       if (leadModal.loadingBackBtn) leadModal.loadingBackBtn.classList.remove('rr-hidden');
-    }
-  }
-
-  async function handleExistingCodeLogin() {
-    const el     = leadModal.el;
-    const email  = el.querySelector('.rr-el-email').value.trim();
-    const raw    = el.querySelector('.rr-el-code').value.trim().toUpperCase();
-    const errEl  = el.querySelector('.rr-el-error');
-
-    if (!email || !raw)                       { errEl.textContent = 'Enter your email and code.'; return; }
-    if (!/^[A-Z]{4}[0-9]{4}$/.test(raw))     { errEl.textContent = '4 letters + 4 digits (e.g. ABCD1234).'; return; }
-
-    errEl.textContent = '';
-    setLeadModalMode('loading');
-    setLoadingStatus('Logging in…');
-    if (leadModal.loadingBackBtn) leadModal.loadingBackBtn.classList.add('rr-hidden');
-
-    try {
-      const data = await apiPost('/api/auth/code-login', { email, code: raw });
-      leadModal.token = data.token;
-
-      if (data.imageUrl) {
-        leadModal.cardId   = data.cardId;
-        leadModal.imageUrl = data.imageUrl;
-        leadModal.amCode   = data.amCode || raw;
-        if (leadModal.cardCodeEl) leadModal.cardCodeEl.textContent = data.amCode || raw;
-        saveAuthToStorage();
-        setDownloadShareVisible(true);
-        setLeadModalMode('card');
-      } else {
-        leadModal.uploadCvBackMode = 'existing-login';
-        setLeadModalMode('upload-cv');
-      }
-    } catch (err) {
-      setLeadModalMode('existing-login');
-      const errEl2 = leadModal.el.querySelector('.rr-el-error');
-      if (errEl2) errEl2.textContent = err.message;
     }
   }
 
@@ -2477,13 +2417,6 @@
             <div class="rr-lead-label rr-el-subtitle">RETURNING USER</div>
             <div class="rr-lead-label rr-el-title">WELCOME BACK</div>
             <button class="rr-el-li-btn" type="button">CONTINUE WITH LINKEDIN</button>
-            <div class="rr-el-or">— or enter your code —</div>
-            <div class="rr-lead-label rr-el-email-label">E-MAIL</div>
-            <input class="rr-lead-input rr-el-email" type="email" placeholder="you@email.com" />
-            <div class="rr-lead-label rr-el-code-label">YOUR CODE</div>
-            <input class="rr-lead-input rr-el-code" maxlength="8" placeholder="ABCD1234" autocomplete="off" />
-            <button class="rr-el-submit" type="button">LOGIN →</button>
-            <div class="rr-el-error"></div>
             <div class="rr-el-back">New here? <span class="rr-red-link rr-el-to-entry">← back</span></div>
           </div>
 
@@ -2664,10 +2597,6 @@
     overlay.querySelector('.rr-el-li-btn').addEventListener('click', () => {
       window.location.href = `${BACKEND_URL}/api/auth/linkedin?intent=existing`;
     });
-    overlay.querySelector('.rr-el-submit').addEventListener('click', handleExistingCodeLogin);
-    overlay.querySelector('.rr-el-code').addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleExistingCodeLogin();
-    });
     overlay.querySelector('.rr-el-to-entry').addEventListener('click', () => setLeadModalMode('entry'));
 
     // Confirm
@@ -2712,12 +2641,6 @@
     overlay.querySelectorAll('.rr-signup-link').forEach(el => {
       el.addEventListener('click', () => setLeadModalMode('entry'));
     });
-    if (leadModal.codeInput) {
-      leadModal.codeInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') handleExistingCodeLogin();
-      });
-    }
-
     // Share
     const actionBtns = overlay.querySelectorAll('.rr-modal-action');
     if (actionBtns[0]) actionBtns[0].addEventListener('click', handleShare);
@@ -4488,13 +4411,24 @@
         server:    'LinkedIn sign-in failed. Please try again.',
       };
       openLeadModal('existing-login');
-      const errEl = leadModal.el && leadModal.el.querySelector('.rr-el-error');
-      if (errEl) errEl.textContent = msgs[oauthError] || 'LinkedIn sign-in failed.';
+      showToast(msgs[oauthError] || 'LinkedIn sign-in failed.');
     }
   }
 
-  // Hydrate saved session first, then handle any OAuth callback
+  // If returning from leaderboard with ?openModal=card, reopen the card modal.
+  // Auth is already restored by hydrateAuthFromStorage() — no sessionStorage needed.
+  function checkReturnFromLeaderboard() {
+    const urlP = new URLSearchParams(window.location.search);
+    if (urlP.get('openModal') !== 'card') return;
+    history.replaceState(null, '', window.location.pathname);
+    if (!leadModal.token || !leadModal.amCode) return;
+    openLeadModal('card');
+    openCardModal(leadModal.amCode);
+  }
+
+  // Hydrate saved session first, then handle any OAuth callback or leaderboard return
   hydrateAuthFromStorage().then(() => {
     checkOAuthReturn();
+    checkReturnFromLeaderboard();
   });
 })();
