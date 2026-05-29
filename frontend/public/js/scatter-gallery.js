@@ -897,18 +897,29 @@
       }
 
       /* ── CONFIRM MODE ── */
+      .rr-mode-confirm:not(.rr-hidden) {
+        display: flex;
+        flex-direction: column;
+        padding-top: 12px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* override absolute positioning inherited from .rr-lead-label / .rr-lead-input */
+      .rr-mode-confirm .rr-lead-label,
+      .rr-mode-confirm .rr-lead-input { position: static; width: 100%; }
       .rr-mode-confirm .rr-cf-step {
-        position: absolute; top: 10px; left: 0;
         font-size: 8px; color: #555; letter-spacing: .16em;
+        margin-bottom: 6px;
       }
       .rr-mode-confirm .rr-cf-title {
-        position: absolute; top: 28px; left: 0;
         font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .14em;
+        margin-bottom: 12px;
       }
       .rr-cf-photo-wrap {
-        position: absolute; top: 56px;
-        left: calc(50% - 26px);
+        align-self: center;
         width: 52px; height: 52px;
+        flex-shrink: 0;
+        margin-bottom: 10px;
       }
       .rr-cf-photo {
         width: 52px; height: 52px; border-radius: 50%;
@@ -916,8 +927,11 @@
         background: #1a1a1a; display: block;
       }
       .rr-cf-disclaimer {
-        position: absolute; top: 116px; left: 0; width: 245px;
-        border: 1px solid rgba(255,255,255,0.12); padding: 7px 22px 7px 8px; box-sizing: border-box;
+        position: relative;
+        border: 1px solid rgba(255,255,255,0.12);
+        padding: 7px 22px 7px 8px; box-sizing: border-box;
+        flex-shrink: 0;
+        margin-bottom: 10px;
       }
       .rr-cf-disclaimer-text {
         font-size: 9px; line-height: 1.5; color: rgba(255,255,255,0.36); letter-spacing: 0.03em;
@@ -930,23 +944,23 @@
         -webkit-tap-highlight-color: transparent;
       }
       .rr-cf-disclaimer-close:hover { color: rgba(255,255,255,0.60); }
-      .rr-cf-bio-label   { position: absolute; top: 202px; left: 0; }
-      .rr-cf-bio   { position: absolute; top: 220px; left: 0; width: 245px; }
-      .rr-cf-port-label  { position: absolute; top: 262px; left: 0; }
-      .rr-cf-port  { position: absolute; top: 280px; left: 0; width: 245px; }
+      .rr-cf-bio-label   { font-size: 8px; color: #888; letter-spacing: .14em; font-weight: 400; margin-bottom: 4px; }
+      .rr-cf-bio         { margin-bottom: 10px; }
+      .rr-cf-port-label  { font-size: 8px; color: #888; letter-spacing: .14em; font-weight: 400; margin-bottom: 4px; }
+      .rr-cf-port        { margin-bottom: 12px; }
       .rr-cf-next {
-        position: absolute; top: 324px; left: 0;
-        width: 245px; height: 32px; min-height: 44px;
+        width: 100%; height: 32px; min-height: 44px;
         background: #fff; border: 0; color: #000;
         font-family: "Pixelify Sans", monospace;
         font-size: 10px; letter-spacing: .14em; cursor: pointer;
+        margin-bottom: 8px;
         -webkit-tap-highlight-color: transparent;
       }
       .rr-cf-next:hover { background: #b90000; color: #fff; }
       .rr-cf-back {
-        position: absolute; top: 366px; left: 0;
         font-size: 8px; color: #555; cursor: pointer;
         -webkit-tap-highlight-color: transparent;
+        align-self: flex-start;
       }
       .rr-cf-back:hover { color: #fff; }
 
